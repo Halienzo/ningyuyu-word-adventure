@@ -1,0 +1,2868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宁鱼鱼的单词冒险 · 高考英语分题型提分系统</title>
+<style>
+/* ═══════════════════════════════════════════ */
+/* 宁鱼鱼的单词冒险 · Design System v2        */
+/* ═══════════════════════════════════════════ */
+
+/* ── Light Theme (Default) ── */
+:root {
+  --primary: #7C3AED;
+  --primary-light: #A78BFA;
+  --primary-dark: #6D28D9;
+  --accent: #EC4899;
+  --accent-light: #F472B6;
+  --green: #10B981;
+  --green-dark: #059669;
+  --sky: #0EA5E9;
+  --sky-light: #38BDF8;
+  --bg: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-card-alt: #F1F5F9;
+  --text: #1E293B;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --border: #E2E8F0;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.1);
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --tab-active: #7C3AED;
+  --card: #fff;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --z-fish: 99;
+  --z-theme-toggle: 100;
+  --z-fish-cheer: 300;
+  --z-modal-backdrop: 900;
+  --z-modal: 1000;
+  --z-tts-stop: 9999;
+}
+
+/* ── Dark Theme ── */
+[data-theme="dark"] {
+  --primary: #A78BFA;
+  --primary-light: #C4B5FD;
+  --primary-dark: #7C3AED;
+  --accent: #F472B6;
+  --accent-light: #FBCFE8;
+  --bg: #0F172A;
+  --bg-card: #1E293B;
+  --bg-card-alt: #334155;
+  --text: #F1F5F9;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --border: #334155;
+  --shadow: 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.6);
+  --card: #1E293B;
+}
+
+/* ── Base Reset ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { font-size: 16px; scroll-behavior: smooth; overflow-x: hidden; max-width: 100vw; }
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6;
+  transition: background 0.3s ease, color 0.3s ease;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden; max-width: 100vw;
+  padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+
+/* ── Focus Visible ── */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 2px; }
+:focus:not(:focus-visible) { outline: none; }
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Theme Toggle ── */
+.theme-toggle {
+  position: fixed; top: 14px; right: 20px; z-index: var(--z-theme-toggle);
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px); cursor: pointer; font-size: 1.25em;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s ease; color: white; line-height: 1;
+}
+.theme-toggle:hover { background: rgba(255,255,255,0.25); transform: scale(1.1); }
+[data-theme="dark"] .theme-toggle {
+  border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06);
+}
+
+/* ── Fish Mascots ── */
+.fish-left, .fish-right {
+  position: fixed; z-index: var(--z-fish); pointer-events: none;
+}
+.fish-left { top: 6px; left: 18px; }
+.fish-right { top: 6px; right: 75px; }
+.fish-mascot {
+  font-size: 2em; display: inline-block; cursor: pointer;
+  pointer-events: auto; user-select: none;
+  transition: transform 0.2s ease; position: relative;
+}
+.fish-mascot:hover { transform: scale(1.35); }
+.fish-mascot:active { transform: scale(0.85); }
+
+@keyframes fish-nini {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  15% { transform: translateY(-8px) rotate(-4deg) scale(1.08); }
+  30% { transform: translateY(2px) rotate(2deg) scale(0.95); }
+  45% { transform: translateY(-5px) rotate(-3deg) scale(1.04); }
+  60% { transform: translateY(0) rotate(0deg) scale(1); }
+}
+@keyframes fish-yuyu {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-5px) rotate(-2deg); }
+  75% { transform: translateY(5px) rotate(2deg); }
+}
+.fish-nini { animation: fish-nini 3.5s ease-in-out infinite; }
+.fish-yuyu { animation: fish-yuyu 4.5s ease-in-out infinite; }
+
+/* Fish bubbles */
+.fish-bubbles { position: absolute; top: 0; left: 0; pointer-events: none; }
+.fish-bubble {
+  position: absolute; font-size: 0.55em; opacity: 0;
+  animation: bubble-up 2.8s ease-out infinite;
+}
+.fish-bubble:nth-child(1) { animation-delay: 0s; left: 4px; top: 6px; }
+.fish-bubble:nth-child(2) { animation-delay: 1.4s; left: 8px; top: 10px; }
+@keyframes bubble-up {
+  0% { opacity: 0; transform: translateY(0) scale(0.4); }
+  15% { opacity: 0.7; }
+  100% { opacity: 0; transform: translateY(-26px) scale(1.1); }
+}
+
+/* Fish cheer toast */
+.fish-cheer {
+  position: fixed; top: 18%; left: 50%; transform: translate(-50%,-50%);
+  background: var(--bg-card); color: var(--text);
+  padding: 10px 22px; border-radius: 24px; box-shadow: var(--shadow-lg);
+  z-index: var(--z-fish-cheer); font-size: 0.95em; font-weight: 600;
+  pointer-events: none; opacity: 0; white-space: nowrap;
+  border: 2px solid var(--primary-light);
+}
+.fish-cheer.pop {
+  animation: cheer-pop 2.2s ease-out forwards;
+}
+@keyframes cheer-pop {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(0.5); }
+  12% { opacity: 1; transform: translate(-50%,-50%) scale(1.08); }
+  22% { transform: translate(-50%,-50%) scale(1); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%,-85%) scale(0.9); }
+}
+
+/* ── Header ── */
+.header {
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 25%, #BE185D 65%, #F472B6 100%);
+  color: white; padding: 20px 30px; text-align: center;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.3);
+  position: relative; overflow: hidden;
+}
+.header h1 { font-size: 1.8em; margin-bottom: 5px; position: relative; z-index: 1; }
+.header p { opacity: 0.9; font-size: 0.95em; position: relative; z-index: 1; }
+[data-theme="dark"] .header {
+  background: linear-gradient(135deg, #4C1D95 0%, #3B1578 25%, #831843 65%, #9D174D 100%);
+  box-shadow: 0 4px 20px rgba(76,29,149,0.4);
+}
+
+/* ── Stats Bar ── */
+.stats-bar {
+  display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+  padding: 14px 15px; background: var(--bg-card); margin: 15px 20px;
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.stat-card { text-align: center; min-width: 100px; }
+.stat-card .num {
+  font-size: 2em; font-weight: bold;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-card .label { font-size: 0.8em; color: var(--text-secondary); }
+
+/* ── Tab Navigation ── */
+.tab-nav {
+  display: flex; gap: 3px; margin: 0 20px; overflow-x: auto;
+  padding: 6px 8px; background: var(--bg-card);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+  transition: background 0.3s ease;
+}
+.tab-btn {
+  padding: 9px 15px; border: none; background: transparent;
+  border-radius: 22px; cursor: pointer; font-size: 0.84em;
+  white-space: nowrap; transition: all 0.25s ease; font-weight: 500;
+  color: var(--text-secondary);
+}
+.tab-btn:hover { background: rgba(124,58,237,0.08); color: var(--primary); }
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white; box-shadow: 0 2px 12px rgba(124,58,237,0.4);
+}
+
+/* ── Tab Content ── */
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeSlideIn 0.3s ease; }
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.main-container { margin: 0 20px 20px; }
+
+/* ── Cards ── */
+.card {
+  background: var(--bg-card); border-radius: var(--radius);
+  padding: 20px; margin-bottom: 15px;
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+.card h2 { color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 8px; margin-bottom: 15px; font-size: 1.3em; }
+.card h3 { color: var(--text); margin: 15px 0 10px; font-size: 1.1em; }
+
+/* ── Vocab Grid ── */
+.vocab-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+/* ── Flip Card System ── */
+.vocab-card {
+  perspective: 600px;
+  height: 96px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.vocab-card:hover { transform: translateY(-2px); }
+.vocab-card-inner {
+  position: relative; width: 100%; height: 100%;
+  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+  transform-style: preserve-3d;
+}
+.vocab-card.flipped .vocab-card-inner {
+  transform: rotateY(180deg);
+}
+.vocab-card-front, .vocab-card-back {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  border-radius: 10px; border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px 12px;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.vocab-card-front {
+  background: linear-gradient(135deg, #F8FAFC, #EDE9FE);
+  flex-direction: column; gap: 2px;
+}
+[data-theme="dark"] .vocab-card-front {
+  background: linear-gradient(135deg, #1E293B, #2D1B69);
+}
+.vocab-card-front .word {
+  font-weight: 700; font-size: 1.05em; color: var(--primary);
+  text-align: center; word-break: break-word;
+}
+.vocab-card-front .pos-tag {
+  font-size: 0.72em; color: var(--text-muted); font-style: italic;
+}
+.vocab-card-front .learned-star {
+  position: absolute; top: 6px; right: 8px;
+  font-size: 0.85em; opacity: 0.5;
+}
+.vocab-card.learned .vocab-card-front {
+  border-color: var(--green); background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+}
+[data-theme="dark"] .vocab-card.learned .vocab-card-front {
+  background: linear-gradient(135deg, #064E3B, #065F46);
+}
+.vocab-card.learned .learned-star { opacity: 1; color: var(--green); }
+
+.vocab-card-back {
+  background: var(--bg-card); border-color: var(--primary-light);
+  transform: rotateY(180deg);
+  flex-direction: column; gap: 6px;
+}
+[data-theme="dark"] .vocab-card-back { border-color: #7C3AED; }
+.vocab-card-back .meaning-hint {
+  font-size: 0.95em; font-weight: 600; color: var(--text);
+}
+.vocab-card-back .type-row {
+  display: flex; gap: 5px; width: 100%;
+}
+.vocab-card-back .typing-input {
+  flex: 1; padding: 5px 8px; border: 2px solid var(--primary-light);
+  border-radius: 6px; font-size: 0.9em; font-family: 'Consolas','Courier New',monospace;
+  outline: none; min-width: 0; background: var(--bg); color: var(--text);
+  transition: border-color 0.2s ease;
+}
+.vocab-card-back .typing-input:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+}
+.vocab-card-back .check-btn {
+  padding: 4px 10px; background: linear-gradient(135deg, var(--green), #059669);
+  color: white; border: none; border-radius: 6px; cursor: pointer;
+  font-size: 0.85em; white-space: nowrap; transition: all 0.2s ease;
+}
+.vocab-card-back .check-btn:hover {
+  transform: scale(1.05); box-shadow: 0 2px 8px rgba(16,185,129,0.4);
+}
+
+/* ── Card Animations ── */
+@keyframes shake {
+  0%,100% { transform: rotateY(180deg) translateX(0); }
+  20% { transform: rotateY(180deg) translateX(-6px); }
+  40% { transform: rotateY(180deg) translateX(6px); }
+  60% { transform: rotateY(180deg) translateX(-4px); }
+  80% { transform: rotateY(180deg) translateX(4px); }
+}
+@keyframes pulse-green {
+  0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); border-color: var(--green); }
+  70% { box-shadow: 0 0 0 12px rgba(16,185,129,0); border-color: var(--green); }
+  100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); border-color: var(--green); }
+}
+.vocab-card.error-shake .vocab-card-back {
+  animation: shake 0.5s ease;
+  border-color: var(--error) !important; background: rgba(239,68,68,0.06) !important;
+}
+[data-theme="dark"] .vocab-card.error-shake .vocab-card-back {
+  background: rgba(239,68,68,0.18) !important;
+}
+.vocab-card.correct-flash .vocab-card-back {
+  animation: pulse-green 0.6s ease;
+}
+
+/* ── Upgrade Grid ── */
+.upgrade-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 8px;
+}
+.upgrade-item {
+  padding: 10px 14px; background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  border: 1px solid #FCD34D; border-radius: 8px; font-size: 0.9em;
+  transition: all 0.2s ease;
+}
+[data-theme="dark"] .upgrade-item {
+  background: linear-gradient(135deg, #292524, #44403C); border-color: #78716C;
+}
+.upgrade-item:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.upgrade-item .low { color: var(--error); text-decoration: line-through; margin-right: 6px; }
+.upgrade-item .arrow { color: var(--warning); margin: 0 4px; }
+.upgrade-item .high { color: var(--green); font-weight: 600; }
+
+/* ── Phrase List ── */
+.phrase-list { list-style: none; }
+.phrase-list li {
+  padding: 8px 15px; margin: 4px 0; background: var(--bg-card-alt);
+  border-radius: 6px; border-left: 3px solid var(--primary-light);
+  cursor: pointer; transition: all 0.2s; color: var(--text);
+}
+.phrase-list li:hover { background: rgba(124,58,237,0.06); border-left-color: var(--primary); }
+.phrase-list li.learned { background: rgba(16,185,129,0.06); border-left-color: var(--green); opacity: 0.7; text-decoration: line-through; }
+
+/* ── Template Box ── */
+.template-box {
+  background: var(--bg-card-alt); border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px; padding: 15px; font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.9em; white-space: pre-wrap; line-height: 1.8;
+  margin: 10px 0; color: var(--text);
+}
+
+/* ── Daily Check-in ── */
+.checkin-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+}
+.checkin-day {
+  text-align: center; padding: 12px 8px; border-radius: var(--radius-sm);
+  cursor: pointer; border: 2px solid var(--border);
+  transition: all 0.25s ease; font-size: 0.85em;
+  color: var(--text-secondary); background: var(--bg-card);
+}
+.checkin-day:hover {
+  border-color: var(--primary-light); background: rgba(124,58,237,0.05);
+  transform: translateY(-2px);
+}
+.checkin-day.checked {
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: white; border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(16,185,129,0.35);
+}
+.checkin-day.today {
+  border-color: var(--accent); border-width: 3px;
+  animation: pulse-today 2s infinite;
+  color: var(--accent); font-weight: 700;
+}
+@keyframes pulse-today {
+  0%,100% { box-shadow: 0 0 0 0 rgba(236,72,153,0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(236,72,153,0); }
+}
+
+/* ── Progress Bar ── */
+.progress-bar {
+  height: 22px; background: var(--bg-card-alt); border-radius: 11px;
+  overflow: hidden; margin: 10px 0; border: 1px solid var(--border);
+}
+.progress-fill {
+  height: 100%; border-radius: 11px; transition: width 0.5s ease;
+  background: linear-gradient(90deg, var(--accent), var(--primary), var(--green));
+  background-size: 200% 100%; animation: progress-shine 2s linear infinite;
+  text-align: center; color: white; font-size: 0.75em; line-height: 22px;
+  font-weight: 600;
+}
+@keyframes progress-shine {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ── Audio Player ── */
+.audio-player {
+  display: flex; align-items: center; gap: 15px;
+  padding: 10px; background: var(--bg-card-alt); border-radius: var(--radius-sm);
+  margin: 10px 0;
+}
+.audio-player audio { flex: 1; }
+
+/* ── Buttons ── */
+.btn {
+  padding: 8px 16px; border: none; border-radius: 8px;
+  cursor: pointer; font-size: 0.9em; font-weight: 500;
+  transition: all 0.2s ease; color: white;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  box-shadow: 0 2px 8px rgba(124,58,237,0.3);
+}
+.btn-primary:hover { box-shadow: 0 4px 16px rgba(124,58,237,0.45); transform: translateY(-1px); }
+.btn-success {
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+}
+.btn-success:hover { box-shadow: 0 4px 16px rgba(16,185,129,0.45); transform: translateY(-1px); }
+.btn-warning { background: linear-gradient(135deg, var(--warning), #D97706); }
+.btn-sm { padding: 4px 10px; font-size: 0.8em; border-radius: 6px; }
+
+/* ── Modal ── */
+.modal {
+  display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.6); z-index: var(--z-modal); justify-content: center; align-items: center;
+}
+@supports (backdrop-filter: blur(4px)) {
+  .modal { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+}
+.modal.show { display: flex; }
+.modal-content {
+  background: var(--bg-card); border-radius: var(--radius);
+  padding: 25px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* ── Search ── */
+.search-box {
+  width: 100%; padding: 10px 15px; border: 2px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 1em; margin-bottom: 10px;
+  background: var(--bg-card); color: var(--text);
+  transition: all 0.2s ease;
+}
+.search-box:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+
+/* ── Highlight ── */
+mark { background: #FDE68A; padding: 1px 4px; border-radius: 3px; color: #1E293B; }
+
+/* ── Review Queue ── */
+.review-item {
+  padding: 10px; margin: 5px 0; background: var(--bg-card-alt);
+  border-radius: 6px; display: flex; justify-content: space-between;
+  align-items: center; border-left: 3px solid var(--warning);
+  color: var(--text);
+}
+
+/* ── Table Styles ── */
+table { border-collapse: separate; border-spacing: 0; border-radius: var(--radius-sm); overflow: hidden; width: 100%; }
+th { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 10px; font-weight: 600; }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
+tr:nth-child(even) td { background: var(--bg-card-alt); }
+
+/* ── Long Sentence Training ── */
+.sentence-block {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; margin: 10px 0;
+  transition: all 0.3s ease;
+}
+.sentence-en {
+  font-size: 1.02em; font-weight: 600; color: var(--text); margin-bottom: 10px;
+  padding: 10px 14px; background: var(--bg-card-alt); border-radius: var(--radius-sm);
+  border-left: 4px solid var(--primary); line-height: 1.7;
+}
+.breakdown-box {
+  display: none; margin-top: 8px; padding: 12px;
+  background: var(--bg-card-alt); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); color: var(--text);
+}
+.breakdown-box.show { display: block; }
+.breakdown-item { margin: 4px 0; padding: 6px 10px; border-radius: 6px; font-size: 0.9em; }
+.breakdown-main { background: rgba(124,58,237,0.06); border-left: 3px solid var(--primary); }
+.breakdown-mod { background: rgba(236,72,153,0.06); border-left: 3px solid var(--accent); }
+.breakdown-trans { background: rgba(16,185,129,0.06); border-left: 3px solid var(--green); }
+.breakdown-vocab { background: rgba(14,165,233,0.06); border-left: 3px solid var(--sky); }
+/* Sentence modifier color labels */
+.c1 { color: var(--accent); font-weight: 500; }
+.c2 { color: var(--sky); font-weight: 500; }
+[data-theme="dark"] .c1 { color: #F472B6; }
+[data-theme="dark"] .c2 { color: #38BDF8; }
+
+/* ── TTS (Text-to-Speech) Styles ── */
+.tts-btn { display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;min-width:32px;min-height:32px;
+  border-radius:50%;border:1.5px solid rgba(124,58,237,0.3);background:rgba(124,58,237,0.08);color:var(--primary);
+  cursor:pointer;font-size:0.85em;line-height:1;padding:0;transition:all 0.2s ease;flex-shrink:0;
+  user-select:none;-webkit-tap-highlight-color:transparent; }
+.tts-btn:hover { background:rgba(124,58,237,0.18);border-color:var(--primary);transform:scale(1.1); }
+.tts-btn:active { background:rgba(124,58,237,0.28);transform:scale(0.95); }
+[data-theme="dark"] .tts-btn { border-color:rgba(167,139,250,0.35);background:rgba(167,139,250,0.1);color:var(--primary-light); }
+[data-theme="dark"] .tts-btn:hover { background:rgba(167,139,250,0.22); }
+.vocab-card-front .tts-btn-card { position:absolute;top:6px;left:8px;width:32px;height:32px;min-width:32px;min-height:32px;font-size:0.8em; }
+.tts-btn-inline { margin-left:6px;vertical-align:middle; }
+.tts-speaking { box-shadow:0 0 0 3px rgba(124,58,237,0.35),0 0 12px rgba(124,58,237,0.2)!important;border-color:var(--primary)!important;
+  animation:tts-pulse 1.2s ease-in-out infinite; }
+@keyframes tts-pulse { 0%,100%{box-shadow:0 0 0 3px rgba(124,58,237,0.35),0 0 12px rgba(124,58,237,0.2);}
+  50%{box-shadow:0 0 0 6px rgba(124,58,237,0.15),0 0 20px rgba(124,58,237,0.35);} }
+[data-theme="dark"] .tts-speaking { box-shadow:0 0 0 3px rgba(167,139,250,0.45),0 0 14px rgba(167,139,250,0.25)!important; }
+.tts-speaking.sentence-en { box-shadow:0 0 0 3px rgba(236,72,153,0.4),0 0 14px rgba(236,72,153,0.25)!important;
+  border-color:var(--accent)!important;animation:tts-pulse-sentence 1.2s ease-in-out infinite; }
+@keyframes tts-pulse-sentence { 0%,100%{box-shadow:0 0 0 3px rgba(236,72,153,0.4),0 0 14px rgba(236,72,153,0.25);}
+  50%{box-shadow:0 0 0 6px rgba(236,72,153,0.2),0 0 22px rgba(236,72,153,0.4);} }
+.tts-stop-float { position:fixed;bottom:24px;right:20px;z-index:var(--z-tts-stop);width:48px;height:48px;border-radius:50%;
+  border:2px solid var(--error);background:var(--bg-card);color:var(--error);font-size:1.1em;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(239,68,68,0.3);
+  transition:all 0.2s ease;-webkit-tap-highlight-color:transparent; }
+.tts-stop-float:hover { background:var(--error);color:white;transform:scale(1.1); }
+.tts-stop-float:active { transform:scale(0.95); }
+[data-theme="dark"] .tts-stop-float { border-color:#F87171;color:#F87171;box-shadow:0 4px 16px rgba(248,113,113,0.3); }
+@media (max-width:768px) { .tts-btn{width:36px;height:36px;min-width:36px;min-height:36px;font-size:0.9em;}
+  .vocab-card-front .tts-btn-card{width:36px;height:36px;min-width:36px;min-height:36px;top:5px;left:6px;}
+  .tts-stop-float{width:44px;height:44px;bottom:20px;right:16px;} }
+@media (max-width:480px) { .tts-btn{width:40px;height:40px;min-width:40px;min-height:40px;}
+  .vocab-card-front .tts-btn-card{width:40px;height:40px;min-width:40px;min-height:40px;} }
+
+/* ── Music Player ── */
+.music-player { position: fixed; top: 10px; right: 58px; z-index: var(--z-theme-toggle); }
+.music-toggle { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--border);
+  background: var(--bg-card); color: var(--text); font-size: 1.2em; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.music-toggle:hover { transform: scale(1.1); border-color: var(--accent); }
+.music-toggle.active { background: var(--accent); color: white; border-color: var(--accent); animation: musicPulse 1.5s ease-in-out infinite; }
+@keyframes musicPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(147,51,234,0.4); } 50% { box-shadow: 0 0 0 8px rgba(147,51,234,0); } }
+.music-menu { display: none; position: absolute; top: 44px; right: 0; width: 260px;
+  background: var(--bg-card); border: 2px solid var(--border); border-radius: 12px;
+  padding: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+.music-menu.show { display: block; animation: slideDown 0.2s ease; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.music-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+  font-weight: 600; color: var(--accent); font-size: 0.9em; }
+.music-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1em; }
+.music-tracks { display: flex; flex-direction: column; gap: 4px; }
+.music-track-btn { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: 8px; background: var(--bg-card-alt); color: var(--text); cursor: pointer;
+  font-size: 0.82em; transition: all 0.15s; text-align: left; }
+.music-track-btn:hover { border-color: var(--accent); background: var(--bg-card); }
+.music-track-btn.playing { border-color: var(--accent); background: rgba(147,51,234,0.1); color: var(--accent); font-weight: 600; }
+.music-track-btn .track-icon { font-size: 1.2em; flex-shrink: 0; }
+.music-track-btn .track-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.music-volume { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+.music-volume input[type=range] { flex: 1; accent-color: var(--accent); height: 4px; cursor: pointer; }
+.music-volume span { font-size: 0.9em; }
+
+/* ── Responsive: Tablet / Large Phones ── */
+@media (max-width: 768px) {
+  /* Base */
+  html { font-size: 15px; }
+  body { padding: 4px; }
+  .main-container { max-width: 100%; padding: 10px 8px; }
+
+  /* Header */
+  .header { padding: 18px 12px 12px; margin-bottom: 8px; }
+  .header h1 { font-size: 1.25em; }
+  .header p { font-size: 0.78em; }
+
+  /* Tabs: horizontal scroll */
+  .tab-nav { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 4px; padding: 6px 2px;
+    -webkit-overflow-scrolling: touch; -ms-overflow-style: none; scrollbar-width: none; }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-btn { padding: 8px 11px; font-size: 0.74em; white-space: nowrap; flex-shrink: 0;
+    border-radius: 22px; min-height: 38px; }
+
+  /* Stats */
+  .stats-bar { gap: 6px; padding: 8px 4px; }
+  .stat-card { padding: 8px 6px; min-width: 0; flex: 1 1 auto; }
+  .stat-card .num { font-size: 1.3em; }
+  .stat-card .label { font-size: 0.7em; }
+
+  /* Cards */
+  .card { padding: 14px 12px; margin-bottom: 10px; border-radius: 12px; }
+
+  /* Vocab grid */
+  .vocab-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .vocab-card { min-height: 100px; }
+  .vocab-card .word { font-size: 0.85em; }
+  .vocab-card .pos-tag { font-size: 0.65em; }
+  .vocab-card .meaning-hint { font-size: 0.8em; }
+  .vocab-card .typing-input { font-size: 16px; padding: 6px 8px; height: 34px; }
+  .vocab-card .type-row { flex-direction: column; gap: 4px; }
+  .vocab-card .type-row button { padding: 6px 10px; font-size: 0.72em; min-height: 32px; }
+
+  /* Buttons */
+  .btn { padding: 8px 14px; font-size: 0.82em; min-height: 40px; }
+  .btn-sm { padding: 6px 10px; font-size: 0.72em; min-height: 34px; }
+
+  /* Inputs & Textareas */
+  textarea, input[type="text"] { font-size: 16px; }
+
+  /* Checkin grid */
+  .checkin-grid { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .checkin-grid > div { padding: 6px 2px; font-size: 0.7em; min-height: 32px; }
+
+  /* Progress */
+  .progress-bar { height: 24px; font-size: 0.75em; }
+
+  /* Sentence blocks */
+  .sentence-block { padding: 10px; margin: 8px 0; }
+  .sentence-en { font-size: 0.85em; }
+  .breakdown-box { font-size: 0.82em; padding: 10px; }
+
+  /* Phrase lists */
+  .phrase-list li { padding: 8px 10px; font-size: 0.82em; }
+
+  /* Fish mascots */
+  .fish-left { left: 2px; top: 50px; }
+  .fish-right { right: 4px; top: 50px; }
+  .fish-mascot { font-size: 1.3em; }
+  .fish-bubble { font-size: 0.6em; }
+  .fish-cheer { top: 100px; font-size: 0.85em; padding: 8px 16px; }
+
+  /* Theme toggle & music */
+  .theme-toggle { top: 6px; right: 6px; width: 32px; height: 32px; font-size: 0.9em; }
+  .music-player { top: 6px; right: 44px; }
+  .music-toggle { width: 32px; height: 32px; font-size: 1em; }
+  .music-menu { width: 230px; right: -10px; }
+
+  /* Upgrade grid */
+  .upgrade-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; overflow-x: auto; }
+
+  /* Modals */
+  .modal-content { width: 95%; max-width: 95%; margin: 10% auto; padding: 16px; }
+
+  /* Sentence filter */
+  #sentenceFilter { gap: 4px; }
+  #sentenceFilter .btn { font-size: 0.7em; padding: 5px 10px; min-height: 30px; }
+
+  /* Plot templates */
+  .plot-template-card { padding: 12px; }
+
+  /* Emotion/Scene/Action category headers */
+  .vocab-grid + h3, [id$="VocabContainer"] h3 { font-size: 0.9em; }
+
+  /* Tab content */
+  .tab-content { padding: 4px 0; }
+
+  /* Review queue */
+  #reviewQueue .vocab-card { min-height: 90px; }
+}
+
+/* ── Responsive: Small Phones (360-480px) ── */
+@media (max-width: 480px) {
+  html { font-size: 14px; }
+  body { padding: 2px; }
+  .main-container { padding: 6px 4px; }
+
+  .header h1 { font-size: 1.1em; }
+  .header p { font-size: 0.7em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .tab-btn { padding: 6px 9px; font-size: 0.7em; border-radius: 18px; min-height: 34px; }
+
+  .stats-bar { flex-wrap: wrap; gap: 4px; }
+  .stat-card { flex: 1 1 calc(33% - 4px); min-width: 60px; padding: 6px 4px; }
+  .stat-card .num { font-size: 1.1em; }
+  .stat-card .label { font-size: 0.65em; }
+
+  .card { padding: 10px 8px; border-radius: 10px; }
+
+  .vocab-grid { grid-template-columns: 1fr 1fr; gap: 5px; }
+  .vocab-card { min-height: 88px; }
+  .vocab-card .word { font-size: 0.8em; }
+  .vocab-card-inner { padding: 8px; }
+
+  .btn { padding: 7px 12px; font-size: 0.78em; min-height: 38px; }
+
+  .checkin-grid { grid-template-columns: repeat(5, 1fr); gap: 3px; }
+
+  .fish-left { left: 0; top: 40px; }
+  .fish-right { right: 0; top: 40px; }
+  .fish-mascot { font-size: 1.1em; }
+  .fish-bubble { display: none; }
+
+  .theme-toggle { top: 4px; right: 4px; width: 32px; height: 32px; font-size: 0.8em; }
+  .music-player { top: 4px; right: 40px; }
+  .music-toggle { width: 32px; height: 32px; font-size: 0.9em; }
+
+  .sentence-block { padding: 8px; }
+  .sentence-en { font-size: 0.8em; }
+  .breakdown-box { font-size: 0.78em; }
+
+  #sentenceFilter .btn { font-size: 0.65em; padding: 4px 8px; min-height: 28px; }
+
+  /* Upgrade grid */
+  .upgrade-grid { grid-template-columns: 1fr; gap: 5px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="themeToggle" title="切换亮色/暗色主题" onclick="toggleTheme()">🌙</button>
+
+<!-- Background Music Player -->
+<div class="music-player" id="musicPlayer">
+  <button class="music-toggle" id="musicToggle" title="背景音乐" onclick="toggleMusicMenu()">🎵</button>
+  <div class="music-menu" id="musicMenu">
+    <div class="music-header">
+      <span>🎹 背景音乐</span>
+      <button class="music-close" onclick="toggleMusicMenu()">✕</button>
+    </div>
+    <div class="music-tracks" id="musicTracks"></div>
+    <div class="music-volume">
+      <span>🔈</span>
+      <input type="range" id="musicVolume" min="0" max="100" value="30" oninput="setMusicVolume(this.value)">
+      <span>🔊</span>
+    </div>
+  </div>
+</div>
+<audio id="bgMusic" loop preload="none"></audio>
+
+<!-- Fish Mascots -->
+<div class="fish-left">
+  <span class="fish-mascot fish-nini" onclick="cheerFish('nini')" title="宁宁">
+    🐟
+    <span class="fish-bubbles">
+      <span class="fish-bubble">💭</span>
+      <span class="fish-bubble">💭</span>
+    </span>
+  </span>
+</div>
+<div class="fish-right">
+  <span class="fish-mascot fish-yuyu" onclick="cheerFish('yuyu')" title="鱼鱼">
+    🐠
+    <span class="fish-bubbles">
+      <span class="fish-bubble">💭</span>
+      <span class="fish-bubble">💭</span>
+    </span>
+  </span>
+</div>
+<div class="fish-cheer" id="fishCheer"></div>
+
+<div class="header">
+  <h1>🐟 宁鱼鱼的单词冒险</h1>
+  <p>宁鱼鱼的40天冲刺 · 按题型分类 · 词汇/短语/句型/模板一应俱全</p>
+</div>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat-card"><div class="num" id="totalWords">0</div><div class="label">总词汇量</div></div>
+  <div class="stat-card"><div class="num" id="learnedWords">0</div><div class="label">已掌握</div></div>
+  <div class="stat-card"><div class="num" id="checkinDays">0</div><div class="label">打卡天数</div></div>
+  <div class="stat-card"><div class="num" id="streakDays">0</div><div class="label">连续打卡</div></div>
+  <div class="stat-card"><div class="num" id="progressPct">0%</div><div class="label">总进度</div></div>
+</div>
+
+<div class="tab-nav" id="tabNav">
+  <button class="tab-btn active" data-tab="reading">📖 C/D篇阅读</button>
+  <button class="tab-btn" data-tab="cloze">📝 完形填空</button>
+  <button class="tab-btn" data-tab="qixuan">🔗 七选五</button>
+  <button class="tab-btn" data-tab="writing1">✉️ 应用文写作</button>
+  <button class="tab-btn" data-tab="writing2">✍️ 读后续写</button>
+  <button class="tab-btn" data-tab="sentence">🔬 长难句训练</button>
+  <button class="tab-btn" data-tab="daily">📅 每日打卡</button>
+  <button class="tab-btn" data-tab="review">🔄 复习队列</button>
+</div>
+
+<div class="main-container">
+
+<!-- ==================== READING C/D TAB ==================== -->
+<div class="tab-content active" id="tab-reading">
+  <div class="card">
+    <h2>📖 阅读理解C/D篇 · 核心学术词汇（250词）</h2>
+    <input type="text" class="search-box" placeholder="🔍 搜索词汇..." oninput="searchVocab(this, 'readingVocabGrid')">
+    <div class="progress-bar"><div class="progress-fill" id="readingProgress" style="width:0%">0%</div></div>
+    <h3>学术动词（必会100词）</h3>
+    <div class="vocab-grid" id="readingVocabGrid"></div>
+  </div>
+  <div class="card">
+    <h2>🎯 C/D篇四大题型解题策略</h2>
+    <table style="width:100%;border-collapse:collapse;margin:10px 0">
+      <tr style="background:#1a5276;color:white"><th style="padding:10px">题型</th><th>占比</th><th>解题策略</th><th>提分难度</th></tr>
+      <tr><td style="padding:8px">细节理解题</td><td>约40%</td><td>定位关键词→回归原文→对照选项（正确选项往往是同义改写！）</td><td>⭐最容易</td></tr>
+      <tr><td style="padding:8px">推理判断题</td><td>约25%</td><td>原文暗示→排除过度推理→选最直接合理推论</td><td>⭐⭐⭐需练习</td></tr>
+      <tr><td style="padding:8px">主旨大意题</td><td>约15%</td><td>首段+尾段+每段首句→排除范围过大/过小选项</td><td>⭐⭐中等</td></tr>
+      <tr><td style="padding:8px">词义猜测题</td><td>约20%</td><td>上下文找线索（近义词/反义词/解释/举例）→不凭"背过"的词义选！</td><td>⭐⭐中等</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h2>🔪 长难句三刀法</h2>
+    <p><strong>第一刀：找主干（主谓宾）</strong>——先忽略所有修饰成分，找出"谁做了什么事"</p>
+    <p><strong>第二刀：识别修饰成分</strong>——定语从句(that/which/who)、状语从句(when/because/although)、分词结构(-ing/-ed)、介词短语</p>
+    <p><strong>第三刀：理清逻辑关系</strong>——转折(but/however)→重点在后半句；因果(because/so)→因果链条；并列(and/also)→同等重要</p>
+  </div>
+  <div class="card">
+    <h2>🌍 C/D篇四大主题场景词汇</h2>
+    <h3>科技类</h3>
+    <div class="vocab-grid" id="techVocabGrid"></div>
+    <h3>环保类</h3>
+    <div class="vocab-grid" id="envVocabGrid"></div>
+    <h3>心理/健康类</h3>
+    <div class="vocab-grid" id="healthVocabGrid"></div>
+    <h3>社会/文化类</h3>
+    <div class="vocab-grid" id="socialVocabGrid"></div>
+  </div>
+</div>
+
+<!-- ==================== CLOZE TAB ==================== -->
+<div class="tab-content" id="tab-cloze">
+  <div class="card">
+    <h2>📝 完形填空 · 高频动词辨析（200词）</h2>
+    <p style="color:#7f8c8d;margin-bottom:10px">完形填空核心是动词辨析——以下动词常以不同义项考查（熟词生义！）</p>
+    <input type="text" class="search-box" placeholder="🔍 搜索动词..." oninput="searchVocab(this, 'clozeVocabGrid')">
+    <div class="progress-bar"><div class="progress-fill" id="clozeProgress" style="width:0%">0%</div></div>
+    <div class="vocab-grid" id="clozeVocabGrid"></div>
+  </div>
+  <div class="card">
+    <h2>🎯 完形填空四步法</h2>
+    <p><strong>第一步</strong>（2分钟）：通读全文→抓住故事主线+情感基调+时态人称</p>
+    <p><strong>第二步</strong>（8分钟）：逐空推敲→先易后难→先做词汇搭配空→再做语境空→最后逻辑空</p>
+    <p><strong>第三步</strong>（2分钟）：代入验证→语法正确？语义通顺？情感一致？</p>
+    <p><strong>第四步</strong>（2分钟）：检查修正→词汇复现？逻辑矛盾？熟词生义？</p>
+  </div>
+  <div class="card">
+    <h2>⚡ 完形填空六大技巧</h2>
+    <p><strong>技巧1-词汇复现法：</strong>同一词/同义词在不同位置重复→大概率是答案</p>
+    <p><strong>技巧2-情感一致法：</strong>全文情感基调连贯→空格情感需一致（注意but/however后的转折）</p>
+    <p><strong>技巧3-逻辑推理法：</strong>2025年起重"隐性逻辑"→通过语义关联/行为变化/时间暗示推理</p>
+    <p><strong>技巧4-固定搭配法：</strong>take advantage of / attach importance to / make a difference / account for / in terms of</p>
+    <p><strong>技巧5-文化常识法：</strong>利用西方餐饮/体育/环保/社交常识判断</p>
+    <p><strong>技巧6-排除法：</strong>3个选项明显不符→剩下的为答案（必须回原文验证！）</p>
+  </div>
+  <div class="card">
+    <h2>⚠️ 易错词辨析20组（必背）</h2>
+    <div class="vocab-grid" id="confusingGrid"></div>
+  </div>
+</div>
+
+<!-- ==================== 七选五 TAB ==================== -->
+<div class="tab-content" id="tab-qixuan">
+  <div class="card">
+    <h2>🔗 七选五 · 逻辑衔接词（100词+）</h2>
+    <p style="color:#7f8c8d;margin-bottom:10px">这些是解题的信号词！必须滚瓜烂熟</p>
+    <h3>🔄 转折关系</h3>
+    <div class="vocab-grid" id="transitionGrid"></div>
+    <h3>➡️ 因果关系</h3>
+    <div class="vocab-grid" id="causeGrid"></div>
+    <h3>➕ 递进关系</h3>
+    <div class="vocab-grid" id="additionGrid"></div>
+    <h3>📋 举例/总结/顺序/对比</h3>
+    <div class="vocab-grid" id="otherLogicGrid"></div>
+  </div>
+  <div class="card">
+    <h2>🎯 七选五六大解题技巧</h2>
+    <p><strong>⭐技巧1-代词呼应法（秒杀）：</strong>选项含this/that/it/they/these/those→必须在前文找指代对象。找不到→直接排除！</p>
+    <p><strong>⭐技巧2-原词/同义复现法（最常用）：</strong>原词复现/同义词替换/同范畴词→70%题目可用此技巧</p>
+    <p><strong>⭐技巧3-逻辑关系词法：</strong>转折(前后相反)/因果(前因后果)/递进(态度一致)/举例(先总后分)</p>
+    <p><strong>技巧4-空格位置定功能：</strong>段首→主旨句/段中→承上启下/段尾→总结句</p>
+    <p><strong>技巧5-句式结构一致法：</strong>祈使句排比/短语对称/句型统一</p>
+    <p><strong>技巧6-数字/时间线索法：</strong>first→second→then→finally，严格按时间/步骤逻辑</p>
+  </div>
+  <div class="card">
+    <h2>📝 七选五标准化答题五步骤</h2>
+    <p>①通读全文(2min)→②定位位置(1min)→③寻找关联(3min)→④梳理逻辑(3min)→⑤匹配选项(2min)</p>
+    <p style="color:var(--accent);font-weight:bold">总时间控制：10-12分钟/篇</p>
+  </div>
+</div>
+
+<!-- ==================== 应用文写作 TAB ==================== -->
+<div class="tab-content" id="tab-writing1">
+  <div class="card">
+    <h2>✉️ 应用文写作 · 万能模板（15分）</h2>
+    <p>结构：首段(1-2句)表明身份+目的 | 中段(3-4句)核心内容 | 尾段(1-2句)期待回复/祝愿</p>
+    <p style="color:var(--accent)"><strong>词数：80词左右 | 时间：15-18分钟</strong></p>
+  </div>
+  <div class="card">
+    <h2>📨 邀请信万能模板</h2>
+    <div class="template-box">Dear ___,
+
+I am Li Hua, ___(身份). I'm writing to invite you to ___(活动).
+
+Here are some details. It is scheduled to be held ___(地点) from ___(开始) to ___(结束) on ___(日期). A variety of activities will be organized, including ___(内容). Not only will this event ___(意义1), but it will also ___(意义2).
+
+I would appreciate it if you could come. Looking forward to your early reply.
+
+Yours,
+Li Hua</div>
+  </div>
+  <div class="card">
+    <h2>💡 建议信万能模板</h2>
+    <div class="template-box">Dear ___,
+
+I'm more than delighted to receive your letter asking for my advice on ___(话题). Here are a few suggestions.
+
+To begin with, I think it would be beneficial if you could ___(建议1). The reason is that ___(理由). Besides, you'd better ___(建议2), which can help you ___. Last but not least, why not ___(建议3)? It is a good way to ___.
+
+I sincerely hope my suggestions will be of some help. Please let me know if you have any further questions.
+
+Yours,
+Li Hua</div>
+  </div>
+  <div class="card">
+    <h2>📢 告知信万能模板</h2>
+    <div class="template-box">Dear ___,
+
+I'm writing to inform you of ___(告知事项).
+
+As scheduled, ___(活动/安排) will take place ___(地点) on ___(日期). The details are as follows. First, ___(细节1). Second, ___(细节2). In addition, please remember to ___(注意事项).
+
+Should you have any questions, please don't hesitate to contact me.
+
+Yours,
+Li Hua</div>
+  </div>
+  <div class="card">
+    <h2>🌟 应用文高分句型（每篇至少用3个）</h2>
+    <div class="phrase-list" id="writingSentenceList"></div>
+  </div>
+  <div class="card">
+    <h2>🔄 写作升级替换词（30对必背）</h2>
+    <div class="vocab-grid" id="upgradeGrid"></div>
+  </div>
+</div>
+
+<!-- ==================== 读后续写 TAB ==================== -->
+<div class="tab-content" id="tab-writing2">
+  <div class="card">
+    <h2>✍️ 读后续写 · 核心框架（25分）</h2>
+    <p><strong>读材料（5分钟）</strong>→ 抓三个核心：Who(人物+关系) / What happened(核心冲突) / What emotion(情绪变化轨迹)</p>
+    <p><strong>第一段（约150词）</strong>→ 承接首句→发展情节→推向高潮/转折</p>
+    <p><strong>第二段（约150词）</strong>→ 承接首句→解决问题→升华主题</p>
+    <p style="color:var(--accent)"><strong>总时间：30-35分钟</strong></p>
+  </div>
+  <div class="card">
+    <h2>🌟 读后续写高分句型（必背10句）</h2>
+    <div class="phrase-list" id="continuationSentences"></div>
+  </div>
+  <div class="card">
+    <h2>💫 万能结尾升华句（按主题分类）</h2>
+    <h3>亲情类</h3>
+    <div class="phrase-list" id="endingFamily"></div>
+    <h3>友情/师生类</h3>
+    <div class="phrase-list" id="endingFriendship"></div>
+    <h3>成长励志类</h3>
+    <div class="phrase-list" id="endingGrowth"></div>
+    <h3>万能句式（直接套用）</h3>
+    <div class="phrase-list" id="endingUniversal"></div>
+  </div>
+  <div class="card">
+    <h2>🎬 情节构思模板 · 6大经典故事框架</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;font-size:0.9em">📌 读后续写万变不离其宗，掌握这6个框架就能快速构思！先确定属于哪种类型→套用模板→填充你的细节。</p>
+    <div id="plotTemplatesContainer"></div>
+  </div>
+  <div class="card">
+    <h2>🌤️ 场景描写词库（5大类 · 60+词汇）</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;font-size:0.9em">📌 环境描写开篇/穿插必备！告别"天气很好"→用太阳光、风、声音、氛围来让场景活起来。</p>
+    <div id="sceneVocabContainer"></div>
+  </div>
+  <div class="card">
+    <h2>🏃 动作描写词库（5大类 · 60+词汇）</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;font-size:0.9em">📌 Show, don't tell! 用身体语言代替简单情绪词。不说"他很生气"→说"他握紧拳头，咬牙切齿"。</p>
+    <div id="actionVocabContainer"></div>
+  </div>
+  <div class="card">
+    <h2>🔗 情节过渡词库（4大类 · 40+短语）</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;font-size:0.9em">📌 段落衔接不再生硬！时间推移、情节转折、因果联系、内心独白——让你的故事流畅自然。</p>
+    <div id="transitionVocabContainer"></div>
+  </div>
+  <div class="card">
+    <h2>😊 情绪描写必备词库（12大类 · 130+词汇）</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;font-size:0.9em">📌 点击词卡翻转 → 看中文拼写英文 → 对错音效反馈。写作时替换掉 boring 的简单情绪词！</p>
+    <div id="emotionVocabContainer"></div>
+  </div>
+</div>
+
+<!-- ==================== LONG SENTENCE TAB ==================== -->
+<div class="tab-content" id="tab-sentence">
+  <div class="card">
+    <h2>🔬 长难句三刀法 · 真题实战训练（45+句）</h2>
+    <p style="color:var(--text-secondary);margin-bottom:10px;font-size:0.9em">
+      按<strong>题型场景</strong>分类（科技、环保、心理、社会、完形、七选五），每天练2-3句。<br>
+      训练步骤：<strong>①自己先找主干</strong> → ②点"显示主干"验证 → ③点"显示修饰"看完整拆解 → ④点"显示翻译"对照理解 → ⑤点"句中词汇"积累生词
+    </p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:15px" id="sentenceFilter"></div>
+    <div id="sentenceContainer"></div>
+  </div>
+</div>
+
+<!-- ==================== DAILY CHECKIN TAB ==================== -->
+<div class="tab-content" id="tab-daily">
+  <div class="card">
+    <h2>📅 40天每日打卡</h2>
+    <p>点击日期打卡！所有数据保存在浏览器中，不会丢失。</p>
+    <div style="display:flex;gap:10px;margin:10px 0;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="checkinToday()">✅ 今日打卡</button>
+      <button class="btn btn-warning" onclick="resetCheckins()">🔄 重置打卡</button>
+      <button class="btn btn-success" onclick="exportData()">📥 导出学习数据</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="checkinProgress" style="width:0%">0/40天</div></div>
+    <div class="checkin-grid" id="checkinGrid"></div>
+  </div>
+  <div class="card">
+    <h2>📝 今日学习笔记</h2>
+    <textarea id="dailyNote" style="width:100%;height:120px;padding:10px;border:2px solid var(--border);border-radius:8px;font-size:1em;resize:vertical" placeholder="记录今天学到的重点词汇、遇到的困难、心得感悟..."></textarea>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="saveNote()">💾 保存笔记</button>
+    <div id="savedNotes" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- ==================== REVIEW QUEUE TAB ==================== -->
+<div class="tab-content" id="tab-review">
+  <div class="card">
+    <h2>🔄 复习队列（艾宾浩斯遗忘曲线）</h2>
+    <p>以下是你需要今天复习的词汇（基于学习日期的遗忘曲线自动计算）</p>
+    <div id="reviewQueue"></div>
+  </div>
+</div>
+
+</div><!-- end main-container -->
+
+<script>
+// ==================== DATA ====================
+
+// Reading C/D academic verbs
+const academicVerbs = [
+  'analyze|分析|v.', 'demonstrate|证明/展示|v.', 'indicate|表明/指示|v.', 'identify|识别/确认|v.',
+  'generate|产生/生成|v.', 'approach|接近/方法|v./n.', 'address|解决/演讲|v.', 'conduct|实施/进行|v.',
+  'establish|建立/确立|v.', 'determine|确定/决定|v.', 'confirm|确认/证实|v.', 'reveal|揭示/透露|v.',
+  'emphasize|强调/重视|v.', 'contribute|贡献/投稿|v.', 'promote|促进/推广|v.', 'assume|假设/承担|v.',
+  'conclude|推断/总结|v.', 'define|定义/界定|v.', 'illustrate|说明/阐明|v.', 'imply|暗示/意味着|v.',
+  'maintain|维持/主张|v.', 'obtain|获得/得到|v.', 'occur|发生/出现|v.', 'participate|参与/参加|v.',
+  'propose|提议/建议|v.', 'reflect|反映/反思|v.', 'regulate|调节/管理|v.', 'represent|代表/表示|v.',
+  'resolve|解决/决心|v.', 'restrict|限制/约束|v.', 'seek|寻求/寻找|v.', 'select|选择/挑选|v.',
+  'transform|转变/改变|v.', 'vary|变化/不同|v.', 'adopt|采纳/收养|v.', 'assess|评估/评定|v.',
+  'consume|消费/消耗|v.', 'decline|下降/婉拒|v.', 'enhance|增强/提高|v.', 'evaluate|评价/评估|v.',
+  'expand|扩大/扩展|v.', 'explore|探索/探究|v.', 'focus|集中/聚焦|v.', 'highlight|突出/强调|v.',
+  'investigate|调查/研究|v.', 'involve|涉及/包含|v.', 'monitor|监控/监测|v.', 'observe|观察/遵守|v.',
+  'reduce|减少/降低|v.', 'relate|关联/叙述|v.', 'remove|移除/消除|v.', 'replace|替代/替换|v.',
+  'require|需要/要求|v.', 'respond|回应/响应|v.', 'state|陈述/州|v./n.', 'suggest|建议/暗示|v.',
+  'support|支持/支撑|v.', 'survive|幸存/存活|v.', 'tend|倾向于/照料|v.', 'underline|强调/下划线|v.',
+  'access|进入/通道|v./n.', 'account|解释/账户|v./n.', 'advocate|倡导/提倡|v.', 'affect|影响/感动|v.',
+  'apply|申请/应用|v.', 'arise|出现/产生|v.', 'attach|附上/重视|v.', 'benefit|受益/益处|v./n.',
+  'challenge|挑战/质疑|v./n.', 'claim|声称/索赔|v.', 'compare|比较/对比|v.', 'concern|关注/担忧|v./n.',
+  'consider|考虑/认为|v.', 'consist|组成/在于|v.', 'construct|构建/建设|v.', 'contrast|对比/对照|v./n.',
+  'convince|说服/使信服|v.', 'create|创造/创建|v.', 'debate|辩论/争论|v./n.', 'deliver|递送/发表|v.',
+  'deserve|值得/应得|v.', 'display|展示/显示|v.', 'distinguish|区分/辨别|v.', 'distribute|分配/分布|v.',
+  'enable|使能够|v.', 'encounter|遇到/遭遇|v.', 'engage|参与/吸引|v.', 'ensure|确保/保证|v.',
+  'examine|检查/审视|v.', 'exceed|超过/超越|v.', 'exist|存在/生存|v.', 'expect|期待/预期|v.',
+  'explain|解释/说明|v.', 'express|表达/表示|v.', 'facilitate|促进/便利|v.', 'gain|获得/增加|v.',
+  'handle|处理/操控|v.', 'ignore|忽视/忽略|v.', 'impact|影响/冲击|v./n.', 'implement|实施/执行|v.',
+  'improve|改善/提高|v.', 'include|包括/包含|v.', 'increase|增加/增长|v.', 'influence|影响/势力|v./n.'
+];
+
+const academicNouns = [
+  'access|通道/机会|n.', 'awareness|意识/认识|n.', 'benefit|益处/好处|n.', 'challenge|挑战|n.',
+  'concept|概念/观念|n.', 'consequence|后果/结果|n.', 'context|语境/背景|n.', 'decline|下降/衰退|n.',
+  'demand|需求/要求|n.', 'effect|效果/影响|n.', 'evidence|证据/证明|n.', 'factor|因素/要素|n.',
+  'feature|特征/特点|n.', 'focus|焦点/中心|n.', 'function|功能/作用|n.', 'impact|影响/冲击|n.',
+  'issue|议题/问题|n.', 'method|方法/方式|n.', 'opportunity|机会/时机|n.', 'pattern|模式/图案|n.',
+  'phenomenon|现象|n.', 'potential|潜力/潜能|n.', 'process|过程/进程|n.', 'purpose|目的/意图|n.',
+  'resource|资源/财力|n.', 'response|回应/反应|n.', 'role|角色/作用|n.', 'solution|解决方案|n.',
+  'source|来源/出处|n.', 'strategy|策略/战略|n.', 'structure|结构/构造|n.', 'trend|趋势/潮流|n.',
+  'variety|多样性/种类|n.', 'approach|方法/途径|n.', 'aspect|方面/层面|n.', 'assessment|评估/评定|n.',
+  'assumption|假设/设想|n.', 'authority|权威/当局|n.', 'category|类别/范畴|n.', 'circumstance|环境/情况|n.',
+  'community|社区/群体|n.', 'conclusion|结论/总结|n.', 'contribution|贡献/投稿|n.', 'debate|辩论/争论|n.',
+  'definition|定义/释义|n.', 'description|描述/说明|n.', 'dimension|维度/尺寸|n.', 'distinction|区别/卓越|n.',
+  'distribution|分布/分配|n.', 'diversity|多样性/差异|n.', 'emphasis|强调/重点|n.', 'environment|环境|n.',
+  'establishment|建立/机构|n.', 'evaluation|评价/评估|n.', 'exception|例外/除外|n.', 'existence|存在/生存|n.',
+  'exploration|探索/探究|n.', 'finding|发现/调查结果|n.', 'identification|识别/确认|n.', 'implication|含义/影响|n.',
+  'indication|表明/迹象|n.', 'innovation|创新/革新|n.', 'interaction|互动/交互|n.', 'interpretation|解释/解读|n.',
+  'involvement|参与/卷入|n.', 'limitation|限制/局限|n.', 'observation|观察/评论|n.', 'percentage|百分比|n.',
+  'performance|表现/性能|n.', 'perspective|视角/观点|n.', 'possibility|可能性|n.', 'preference|偏好/偏爱|n.',
+  'principle|原则/原理|n.', 'procedure|程序/步骤|n.', 'proportion|比例/部分|n.', 'proposal|提议/建议|n.',
+  'protection|保护/防护|n.', 'range|范围/幅度|n.', 'reduction|减少/降低|n.', 'reference|参考/提及|n.',
+  'regulation|管理/规章|n.', 'relationship|关系/关联|n.', 'relevance|相关性/关联|n.', 'requirement|要求/必要条件|n.',
+  'restriction|限制/约束|n.', 'significance|重要性/意义|n.', 'similarity|相似性|n.', 'statistics|统计数据|n.',
+  'stress|压力/强调|n.', 'suggestion|建议/暗示|n.', 'tendency|趋势/倾向|n.', 'theme|主题/主旨|n.',
+  'tradition|传统/惯例|n.', 'viewpoint|观点/看法|n.'
+];
+
+const academicAdjs = [
+  'available|可用的/有空的|adj.', 'beneficial|有益的/有利的|adj.', 'complex|复杂的|adj.', 'crucial|关键的/重要的|adj.',
+  'effective|有效的|adj.', 'efficient|高效的|adj.', 'essential|必要的/本质的|adj.', 'flexible|灵活的|adj.',
+  'frequent|频繁的|adj.', 'fundamental|基本的/根本的|adj.', 'global|全球的|adj.', 'individual|个人的/个体的|adj.',
+  'limited|有限的|adj.', 'major|主要的/重大的|adj.', 'minor|次要的/较小的|adj.', 'negative|消极的/负面的|adj.',
+  'normal|正常的|adj.', 'original|原始的/独创的|adj.', 'particular|特别的/特定的|adj.', 'physical|身体的/物理的|adj.',
+  'positive|积极的/正面的|adj.', 'potential|潜在的|adj.', 'previous|先前的|adj.', 'primary|主要的/首要的|adj.',
+  'professional|专业的|adj.', 'rapid|快速的|adj.', 'regular|规律的/定期的|adj.', 'relative|相对的|adj.',
+  'relevant|相关的|adj.', 'responsible|负责的|adj.', 'severe|严重的/严厉的|adj.', 'similar|相似的|adj.',
+  'sustainable|可持续的|adj.', 'traditional|传统的|adj.', 'unique|独特的|adj.', 'virtual|虚拟的/实质的|adj.',
+  'widespread|广泛的|adj.', 'academic|学术的|adj.', 'accurate|准确的/精确的|adj.', 'adequate|足够的/适当的|adj.',
+  'alternative|替代的/另类的|adj.', 'appropriate|适当的|adj.', 'artificial|人工的/人造的|adj.', 'aware|意识到的|adj.',
+  'capable|有能力的|adj.', 'commercial|商业的|adj.', 'conscious|有意识的|adj.', 'constant|持续的/不变的|adj.',
+  'contemporary|当代的|adj.', 'creative|创造性的|adj.', 'critical|批评的/关键的|adj.', 'cultural|文化的|adj.',
+  'dependent|依赖的|adj.', 'desirable|可取的/理想的|adj.', 'distinct|明显的/不同的|adj.', 'diverse|多样的|adj.',
+  'domestic|国内的/家庭的|adj.', 'dramatic|戏剧性的/巨大的|adj.', 'economic|经济的|adj.', 'emotional|情感的|adj.',
+  'enormous|巨大的|adj.', 'environmental|环境的|adj.', 'eventual|最终的|adj.', 'evident|明显的|adj.',
+  'external|外部的|adj.', 'financial|金融的/财政的|adj.', 'independent|独立的|adj.', 'internal|内部的|adj.',
+  'logical|逻辑的|adj.', 'mental|心理的/精神的|adj.', 'obvious|明显的|adj.', 'official|官方的/正式的|adj.',
+  'permanent|永久的|adj.', 'practical|实用的/实际的|adj.', 'precious|珍贵的|adj.', 'reasonable|合理的|adj.',
+  'reliable|可靠的|adj.', 'remarkable|显著的/非凡的|adj.', 'rural|农村的|adj.', 'significant|重要的/显著的|adj.',
+  'slight|轻微的|adj.', 'specific|具体的/特定的|adj.', 'stable|稳定的|adj.', 'sufficient|足够的|adj.',
+  'temporary|临时的|adj.', 'thorough|彻底的|adj.', 'tough|艰苦的/强硬的|adj.', 'universal|普遍的/通用的|adj.',
+  'urban|城市的|adj.', 'valuable|有价值的|adj.', 'various|各种各样的|adj.', 'visible|可见的|adj.',
+  'visual|视觉的|adj.', 'vital|至关重要的|adj.', 'voluntary|自愿的|adj.', 'worthwhile|值得的|adj.'
+];
+
+// Cloze verbs
+const clozeVerbs = [
+  'abandon|抛弃/放弃|v.', 'absorb|吸收/吸引|v.', 'accompany|陪伴/伴随|v.', 'accomplish|完成/达成|v.',
+  'acknowledge|承认/感谢|v.', 'acquire|获得/习得|v.', 'adapt|适应/改编|v.', 'adjust|调整/适应|v.',
+  'admit|承认/准许进入|v.', 'adopt|采纳/收养|v.', 'afford|负担得起|v.', 'announce|宣布/通告|v.',
+  'apologize|道歉|v.', 'appeal|呼吁/吸引|v.', 'appreciate|欣赏/感激|v.', 'approach|接近/方法|v./n.',
+  'approve|批准/赞成|v.', 'argue|争论/主张|v.', 'arrange|安排/整理|v.', 'assist|协助/帮助|v.',
+  'associate|联系/关联|v.', 'assume|假设/承担|v.', 'attach|附上/重视|v.', 'attempt|尝试/企图|v.',
+  'attend|出席/照料|v.', 'attract|吸引|v.', 'avoid|避免/回避|v.', 'bear|承受/忍受/生育|v.',
+  'beat|打败/敲打/心跳|v.', 'behave|表现/行为|v.', 'belong|属于|v.', 'blame|责备/归咎|v.',
+  'bother|打扰/费心|v.', 'breathe|呼吸|v.', 'broadcast|广播/传播|v.', 'bury|埋葬/埋藏|v.',
+  'calculate|计算/估计|v.', 'capture|捕获/捕捉|v.', 'celebrate|庆祝/赞美|v.', 'charge|收费/充电/指控|v.',
+  'claim|声称/索赔|v.', 'clarify|澄清/阐明|v.', 'collect|收集/领取|v.', 'comfort|安慰/舒适|v.',
+  'commit|承诺/犯罪|v.', 'communicate|交流/沟通|v.', 'compete|竞争/比赛|v.', 'complain|抱怨/投诉|v.',
+  'concentrate|集中/专注|v.', 'confuse|使困惑/混淆|v.', 'connect|连接/联系|v.', 'consider|考虑/认为|v.',
+  'consume|消费/消耗|v.', 'contain|包含/容纳|v.', 'continue|继续/持续|v.', 'contribute|贡献/投稿|v.',
+  'control|控制/管理|v.', 'convince|说服/使信服|v.', 'count|计数/重要|v.', 'cover|覆盖/涵盖/支付/报道|v.',
+  'create|创造/创建|v.', 'damage|损坏/损害|v.', 'declare|宣布/声明|v.', 'decline|下降/婉拒|v.',
+  'defeat|击败/战胜|v.', 'defend|防御/辩护|v.', 'deliver|递送/发表/接生|v.', 'demand|要求/需求|v.',
+  'deny|否认/拒绝|v.', 'depend|依赖/取决于|v.', 'describe|描述/形容|v.', 'deserve|值得/应得|v.',
+  'design|设计/计划|v.', 'destroy|摧毁/破坏|v.', 'determine|确定/决定|v.', 'develop|发展/开发/冲洗|v.',
+  'devote|奉献/致力于|v.', 'disappear|消失/不见|v.', 'discover|发现/发觉|v.', 'display|展示/显示|v.',
+  'disturb|打扰/扰乱|v.', 'donate|捐赠/捐献|v.', 'drag|拖/拉|v.', 'earn|赚取/赢得|v.',
+  'ease|缓解/减轻|v.', 'educate|教育/培养|v.', 'employ|雇用/使用|v.', 'encourage|鼓励/促进|v.',
+  'enjoy|享受/喜欢|v.', 'ensure|确保/保证|v.', 'entertain|娱乐/招待|v.', 'escape|逃离/逃避|v.',
+  'exchange|交换/兑换|v.', 'exist|存在/生存|v.', 'expand|扩大/扩展|v.', 'expect|期待/预期|v.',
+  'experience|经历/体验|v.', 'explain|解释/说明|v.', 'explore|探索/探究|v.', 'express|表达/表示|v.',
+  'extend|延伸/扩展|v.', 'fail|失败/未能|v.', 'figure|计算/认为/人物|v./n.', 'fit|适合/合身|v.',
+  'forgive|原谅/宽恕|v.', 'form|形成/构成|v.', 'gain|获得/增加|v.', 'gather|聚集/收集|v.',
+  'grasp|抓住/理解|v.', 'guarantee|保证/担保|v.', 'handle|处理/操控|v.', 'hesitate|犹豫/迟疑|v.',
+  'ignore|忽视/忽略|v.', 'imagine|想象/设想|v.', 'impress|给...深刻印象|v.', 'improve|改善/提高|v.',
+  'indicate|表明/指示|v.', 'inform|通知/告知|v.', 'insist|坚持/强调|v.', 'inspire|激励/启发|v.',
+  'intend|打算/想要|v.', 'interrupt|打断/中断|v.', 'introduce|介绍/引入|v.', 'involve|涉及/包含|v.',
+  'judge|判断/评判|v.', 'manage|管理/设法做成|v.', 'matter|重要/要紧|v.', 'measure|测量/衡量|v.',
+  'mention|提到/提及|v.', 'observe|观察/遵守/庆祝|v.', 'obtain|获得/得到|v.', 'offer|提供/主动提出|v.',
+  'operate|操作/运营/手术|v.', 'oppose|反对/对抗|v.', 'organize|组织/安排|v.', 'overcome|克服/战胜|v.',
+  'overlook|俯瞰/忽视|v.', 'perform|表演/执行/表现|v.', 'persuade|说服/劝说|v.', 'possess|拥有/具有|v.',
+  'predict|预测/预言|v.', 'prefer|更喜欢/偏爱|v.', 'prepare|准备/预备|v.', 'preserve|保存/保护|v.',
+  'prevent|阻止/预防|v.', 'produce|生产/产生|v.', 'promise|承诺/答应|v.', 'promote|促进/推广|v.',
+  'protect|保护/防护|v.', 'prove|证明/证实|v.', 'provide|提供/供应|v.', 'publish|出版/发表|v.',
+  'purchase|购买|v.', 'pursue|追求/追赶|v.', 'qualify|使合格/限定|v.', 'raise|举起/提高/养育|v.',
+  'realize|意识到/实现|v.', 'recognize|认出/承认|v.', 'recommend|推荐/建议|v.', 'recover|恢复/康复|v.',
+  'reduce|减少/降低|v.', 'refer|参考/提及|v.', 'reflect|反映/反思|v.', 'refuse|拒绝/回绝|v.',
+  'regret|后悔/遗憾|v.', 'relate|关联/叙述|v.', 'release|释放/发布|v.', 'rely|依赖/信赖|v.',
+  'remain|保持/仍然是|v.', 'remind|提醒/使想起|v.', 'remove|移除/消除|v.', 'replace|替代/替换|v.',
+  'represent|代表/表示|v.', 'request|请求/要求|v.', 'require|需要/要求|v.', 'reserve|预订/保留/储备|v.',
+  'resist|抵抗/抵制|v.', 'resolve|解决/决心|v.', 'respond|回应/响应|v.', 'reveal|揭示/透露|v.',
+  'reward|奖励/回报|v.', 'risk|冒险/风险|v.', 'ruin|毁灭/破坏|v.', 'satisfy|使满意/满足|v.',
+  'secure|获得/使安全|v.', 'seek|寻求/寻找|v.', 'select|选择/挑选|v.', 'separate|分离/分开|v.',
+  'settle|解决/定居|v.', 'share|分享/分担|v.', 'shelter|庇护/躲避|v.', 'spoil|宠坏/破坏|v.',
+  'spot|发现/认出|v.', 'spread|传播/展开|v.', 'struggle|挣扎/斗争/努力|v.', 'suffer|遭受/忍受|v.',
+  'suggest|建议/暗示|v.', 'supply|供应/提供|v.', 'support|支持/供养|v.', 'suppose|假设/认为|v.',
+  'surround|包围/围绕|v.', 'survive|幸存/比...活得长|v.', 'suspect|怀疑/猜想|v.', 'tend|倾向于/照料|v.',
+  'threaten|威胁/恐吓|v.', 'tolerate|容忍/忍受|v.', 'transform|转变/改变|v.', 'treat|对待/治疗/款待|v.',
+  'trust|信任/相信|v.', 'undergo|经历/遭受|v.', 'undertake|承担/从事|v.', 'urge|敦促/强烈欲望|v.',
+  'value|重视/估价|v.', 'vary|变化/不同|v.', 'volunteer|自愿/志愿|v.', 'wander|漫步/走神|v.',
+  'warn|警告/提醒|v.', 'waste|浪费/消耗|v.', 'witness|目击/见证|v.', 'wonder|想知道/惊奇|v.'
+];
+
+// 七选五 逻辑词
+const transitions = [
+  'however|然而|转折', 'but|但是|转折', 'yet|然而|转折', 'instead|相反/代替|转折',
+  'nevertheless|尽管如此|转折', 'unfortunately|不幸的是|转折', 'though|尽管|转折',
+  'on the contrary|相反|转折', 'in contrast|相比之下|转折', 'while|而/虽然|对比',
+  'whereas|然而/鉴于|对比', 'otherwise|否则|转折'
+];
+
+const causeEffect = [
+  'so|所以|因果', 'therefore|因此|因果', 'thus|因此|因果', 'as a result|结果|因果',
+  'consequently|因此|因果', 'hence|因此|因果', 'because of|因为|因果',
+  'due to|由于|因果', 'owing to|由于|因果', 'thanks to|多亏|因果'
+];
+
+const additions = [
+  'and|和/而且|递进', 'also|也|递进', 'besides|此外|递进', 'moreover|而且|递进',
+  'in addition|另外|递进', 'furthermore|此外|递进', 'what is more|更重要的是|递进',
+  'not only...but also|不仅...而且|递进', 'additionally|另外|递进', 'plus|另外|递进'
+];
+
+const otherLogic = [
+  'for example|例如|举例', 'for instance|例如|举例', 'such as|例如|举例',
+  'in conclusion|总之|总结', 'to sum up|总结|总结', 'in short|简而言之|总结',
+  'first|首先|顺序', 'second|其次|顺序', 'then|然后|顺序', 'finally|最后|顺序',
+  'meanwhile|与此同时|顺序', 'afterwards|之后|顺序', 'subsequently|随后|顺序',
+  'similarly|同样地|对比', 'likewise|同样地|对比', 'indeed|确实|强调',
+  'in fact|事实上|强调', 'actually|实际上|强调', 'certainly|当然|强调'
+];
+
+// 写作升级替换词
+// 写作升级替换词（30对必背）— 低阶词 → 高阶替换词
+// Format: { low: 'basic word', zh: '中文意思', high: 'synonym1|synonym2|...' }
+const upgradePairs = [
+  { low: 'important', zh: '重要的', high: 'vital|essential|significant|crucial|paramount' },
+  { low: 'good', zh: '好的/有益的', high: 'beneficial|rewarding|favorable|advantageous|superb' },
+  { low: 'think', zh: '认为', high: 'hold the view that|believe|argue|maintain|contend|reckon' },
+  { low: 'help', zh: '帮助', high: 'contribute to|facilitate|promote|assist|aid|boost' },
+  { low: 'show', zh: '显示/表明', high: 'demonstrate|indicate|reveal|illustrate|display|manifest' },
+  { low: 'very', zh: '非常', high: 'extremely|remarkably|incredibly|exceedingly|tremendously' },
+  { low: 'many', zh: '许多', high: 'numerous|a variety of|various|a multitude of|countless' },
+  { low: 'big', zh: '大的/巨大的', high: 'enormous|tremendous|substantial|massive|immense|gigantic' },
+  { low: 'because', zh: '因为', high: 'due to|on account of|owing to|as a result of|thanks to' },
+  { low: 'but', zh: '但是', high: 'however|nevertheless|whereas|nonetheless|yet|on the contrary' },
+  { low: 'should', zh: '应该', high: 'be supposed to|ought to|be expected to|had better' },
+  { low: 'want', zh: '想要', high: 'be eager to|long for|desire|aspire to|yearn for|crave' },
+  { low: 'like', zh: '喜欢', high: 'be fond of|be keen on|be passionate about|adore|cherish|relish' },
+  { low: 'try', zh: '尝试/努力', high: 'attempt to|strive to|make efforts to|endeavor to|go to great lengths to' },
+  { low: 'use', zh: '使用/利用', high: 'make use of|employ|utilize|take advantage of|harness|apply' },
+  { low: 'get', zh: '获得', high: 'obtain|acquire|gain|achieve|attain|secure' },
+  { low: 'give', zh: '给予', high: 'offer|provide|supply|present|grant|deliver' },
+  { low: 'know', zh: '知道/意识到', high: 'be aware of|recognize|be conscious of|realize|acknowledge|perceive' },
+  { low: 'happy', zh: '快乐的', high: 'delighted|overjoyed|thrilled|ecstatic|content|blissful' },
+  { low: 'sad', zh: '悲伤的', high: 'depressed|heartbroken|sorrowful|gloomy|melancholy|distressed' },
+  { low: 'afraid', zh: '害怕的', high: 'frightened|terrified|scared|petrified|intimidated|alarmed' },
+  { low: 'surprised', zh: '惊讶的', high: 'amazed|astonished|shocked|stunned|dumbfounded|taken aback' },
+  { low: 'angry', zh: '生气的', high: 'annoyed|irritated|furious|indignant|enraged|outraged' },
+  { low: 'beautiful', zh: '美丽的', high: 'attractive|splendid|magnificent|gorgeous|stunning|breathtaking' },
+  { low: 'difficult', zh: '困难的', high: 'challenging|demanding|tough|arduous|strenuous|formidable' },
+  { low: 'enough', zh: '足够的', high: 'sufficient|adequate|ample|abundant|plentiful|generous' },
+  { low: 'fast', zh: '快速的', high: 'rapid|swift|quick|prompt|speedy|brisk' },
+  { low: 'famous', zh: '著名的', high: 'well-known|distinguished|renowned|celebrated|eminent|prestigious' },
+  { low: 'rich', zh: '富有的/丰富的', high: 'wealthy|prosperous|well-off|affluent|abundant|opulent' },
+  { low: 'clear', zh: '清楚的', high: 'obvious|apparent|evident|explicit|transparent|unambiguous' }
+];
+
+// 应用文高分句型
+const writingSentences = [
+  '定语从句：I am writing to invite you to an activity, which will be held...',
+  '倒装句：Not only will this activity broaden our horizons, but it will also...',
+  '非谓语：Knowing that you are interested in..., I am writing to...',
+  '强调句：It is this activity that will make your stay memorable.',
+  '条件句：I would appreciate it if you could accept my invitation.',
+  '目的状语：In order to provide a platform for..., our school is organizing...',
+  '原因状语：Since you have a passion for..., I believe this is a great chance...',
+  '结果状语：The event was so successful that everyone had a great time.'
+];
+
+// 读后续写高分句型
+const continuationSentences = [
+  '非谓语开篇：Looking at..., I felt a wave of...sweep over me.',
+  '无灵主语（高分神器）：A sense of guilt washed over him.（一股愧疚感涌上心头）',
+  '独立主格：Delighted and relieved, she nodded, tears streaming down her cheeks.',
+  '倒装句：Hardly had he sat down when the doorbell rang.',
+  '强调句：It was at that moment that she realized what truly mattered.',
+  '完成时衔接：Having made up his mind, he strode toward the stage.',
+  '时间跨度：After what seemed like ages, he finally managed to make it.',
+  '排比动作：Without delay, he rose to his feet, took a deep breath, and walked out.',
+  '情绪描写：Delighted and relieved, she nodded, joy shining in her eyes.',
+  '结尾顿悟：It dawned on me that what she truly needed was not A, but B.'
+];
+
+// 读后续写结尾句
+const endingFamily = [
+  'From then on, I realized that love may be late, but never absent.',
+  'Family isn\'t just about blood; it\'s about the silent understanding that needs no words.',
+  'In that moment, I understood that home is not a place, but a feeling of being loved.',
+  'Sometimes the people who love us most express it in the quietest ways.'
+];
+
+const endingFriendship = [
+  'True friendship isn\'t about holding the same umbrella in the rain, but dancing together through every storm.',
+  'A great teacher doesn\'t just fill minds with knowledge; they ignite hearts with courage.',
+  'It\'s not the years in your life that count, but the life in your years — and the friends who share it.',
+  'The best kind of friend is the one you can sit with in silence and walk away feeling like it was the best conversation.'
+];
+
+const endingGrowth = [
+  'Life\'s greatest victories aren\'t measured by trophies, but by the invisible battles we fight within ourselves.',
+  'Sometimes, you have to lose your way to find what truly matters.',
+  'Every individual possesses talent. Be brave when you find it and also make efforts. You can create miracles.',
+  'It was through this unique experience that I came to understand what truly mattered was not A, but B.',
+  'Only then did I realize that the most precious thing in life is the courage to be yourself.'
+];
+
+const endingUniversal = [
+  'It was through this unique experience that I came to understand what truly mattered was not A, but B.',
+  'Only then did I realize that the most precious thing in life is...',
+  'Looking back, I am grateful for every challenge that shaped who I am today.',
+  'This experience taught me that even the smallest act of kindness can make the biggest difference.'
+];
+
+// ═══════════════════════════════════════════
+// 读后续写 · 情绪描写词库（12大类 130+词汇）
+// Format: 'word|Chinese|category'
+// ═══════════════════════════════════════════
+const emotionCategories = {
+  '😊 开心/喜悦': [
+    'delighted|欣喜的/高兴的', 'overjoyed|欣喜若狂的', 'thrilled|兴奋不已的',
+    'ecstatic|狂喜的/陶醉的', 'blissful|幸福的/极乐的', 'content|满足的/知足的',
+    'cheerful|欢快的/开朗的', 'radiant|容光焕发的', 'elated|兴高采烈的',
+    'jubilant|欢欣鼓舞的', 'gleeful|欢天喜地的', 'euphoric|极度兴奋的/飘飘然的'
+  ],
+  '😢 悲伤/难过': [
+    'sorrowful|悲伤的/哀伤的', 'depressed|沮丧的/消沉的', 'heartbroken|心碎的',
+    'gloomy|阴郁的/沮丧的', 'melancholy|忧郁的/伤感的', 'distressed|痛苦的/苦恼的',
+    'grief-stricken|悲痛欲绝的', 'mournful|哀悼的/悲哀的', 'despondent|绝望的/失望的',
+    'somber|阴沉的/沉重的', 'crestfallen|垂头丧气的', 'wistful|渴望而忧伤的/惆怅的'
+  ],
+  '😡 愤怒/生气': [
+    'furious|狂怒的/暴怒的', 'indignant|愤慨的/义愤的', 'enraged|激怒的/怒不可遏的',
+    'irritated|恼怒的/烦躁的', 'annoyed|生气的/恼火的', 'outraged|愤怒的/愤慨的',
+    'livid|怒极的/铁青着脸的', 'fuming|气呼呼的', 'resentful|怨恨的/愤恨的',
+    'cross|生气的/愠怒的', 'irate|暴怒的/发怒的', 'aggravated|被激怒的/恼火的'
+  ],
+  '😨 恐惧/害怕': [
+    'frightened|害怕的/受惊的', 'terrified|恐惧的/吓坏的', 'petrified|吓呆的/石化的',
+    'alarmed|惊恐的/惊慌的', 'panicked|恐慌的/惊慌失措的', 'horrified|惊骇的/毛骨悚然的',
+    'startled|受惊吓的/惊跳的', 'apprehensive|担心的/忧虑的', 'unnerved|紧张不安的/吓住的',
+    'intimidated|被威胁的/胆怯的', 'dread-filled|充满恐惧的', 'spooked|受惊吓的/魂飞魄散的'
+  ],
+  '😲 惊讶/震惊': [
+    'astonished|大吃一惊的', 'amazed|惊叹的/大为惊奇的', 'stunned|目瞪口呆的',
+    'dumbfounded|惊呆的/哑然的', 'taken aback|吃惊的/震惊的', 'flabbergasted|大吃一惊的/瞠目结舌的',
+    'bewildered|困惑而惊讶的/不知所措的', 'speechless|说不出话的/惊呆的', 'dazed|茫然惊愕的/恍惚的',
+    'thunderstruck|惊得目瞪口呆的', 'awed|敬畏的/惊叹的', 'incredulous|难以置信的/怀疑的'
+  ],
+  '😰 焦虑/紧张': [
+    'anxious|焦虑的/不安的', 'nervous|紧张的/焦虑的', 'restless|坐立不安的/焦躁的',
+    'uneasy|不安的/担心的', 'tense|紧绷的/紧张的', 'worried|担忧的/发愁的',
+    'jittery|神经过敏的/战战兢兢的', 'fidgety|坐立不安的/烦躁的', 'agitated|焦虑不安的/激动的',
+    'on edge|紧张不安的/如坐针毡的', 'apprehensive|忧心忡忡的', 'troubled|烦恼的/不安的'
+  ],
+  '🙏 感激/感动': [
+    'grateful|感激的/感谢的', 'thankful|感恩的/欣慰的', 'touched|感动的/受触动的',
+    'moved|被打动的/感动的', 'appreciative|感激的/欣赏的', 'indebted|受恩惠而感激的',
+    'obliged|感谢的/承情的', 'overwhelmed|被深深感动的', 'deeply affected|深受触动的',
+    'stirred|被激起的/心潮澎湃的', 'heartfelt|由衷的/诚挚感人的', 'profoundly moved|深深感动的'
+  ],
+  '💪 坚定/决心': [
+    'determined|坚决的/下定决心的', 'resolute|坚定的/不屈不挠的', 'persistent|坚持不懈的',
+    'persevering|坚韧不拔的', 'unwavering|不动摇的/坚定的', 'steadfast|坚定的/毫不动摇的',
+    'tenacious|坚韧的/顽强的', 'committed|投入的/坚定的', 'strong-willed|意志坚强的',
+    'unyielding|不屈服的/顽强的', 'driven|有驱动力的/拼搏的', 'iron-willed|钢铁般意志的'
+  ],
+  '😔 愧疚/后悔': [
+    'guilty|内疚的/有罪的', 'ashamed|羞愧的/惭愧的', 'regretful|后悔的/遗憾的',
+    'remorseful|懊悔的/悔恨的', 'repentant|忏悔的/悔悟的', 'sheepish|窘迫的/不好意思的',
+    'contrite|悔罪的/深感懊悔的', 'conscience-stricken|良心不安的', 'apologetic|道歉的/歉疚的',
+    'rueful|后悔的/懊悔的', 'self-reproachful|自责的', 'penitent|忏悔的/悔过的'
+  ],
+  '😴 疲惫/劳累': [
+    'exhausted|精疲力竭的', 'fatigued|疲惫不堪的', 'weary|疲倦的/厌倦的',
+    'drained|耗尽的/筋疲力尽的', 'worn-out|累坏了的/破旧的', 'depleted|耗尽的/虚脱的',
+    'haggard|憔悴的/疲惫的', 'lethargic|昏昏欲睡的/无精打采的', 'listless|倦怠的/无生气的',
+    'spent|筋疲力尽的', 'bone-tired|累到骨子里的', 'dog-tired|极度疲惫的'
+  ],
+  '😌 宽慰/释然': [
+    'relieved|宽慰的/松一口气的', 'calm|平静的/冷静的', 'serene|宁静的/安详的',
+    'peaceful|平和的/安宁的', 'at ease|安心的/自在的', 'soothed|被安慰的/缓和了的',
+    'comforted|得到安慰的/欣慰的', 'reassured|放心的/安心的', 'composed|沉着的/镇定的',
+    'tranquil|宁静的/安然的', 'unburdened|如释重负的', 'placid|平静的/温和的'
+  ],
+  '💕 爱/温暖': [
+    'affectionate|充满爱意的/温柔的', 'tender|温柔的/柔情的', 'warm|温暖的/热情的',
+    'loving|充满爱的/钟爱的', 'compassionate|有同情心的/慈悲的', 'caring|关怀的/体贴的',
+    'adoring|爱慕的/崇拜的', 'fond|喜爱的/宠爱的', 'cherished|珍爱的/被珍惜的',
+    'heartwarming|暖人心房的', 'embraced|被拥抱的/被接纳的', 'devoted|忠诚的/挚爱的'
+  ]
+};
+
+// ═══════════════════════════════════════════
+// 读后续写 · 场景描写词库（5大类 60+词汇）
+// ═══════════════════════════════════════════
+const sceneVocabCategories = {
+  '☀️ 天气/阳光': [
+    'blazing sun|烈日当空', 'golden rays|金色光芒', 'sunshine streamed through|阳光透过...洒进来',
+    'a gentle breeze|微风轻拂', 'crisp autumn air|清爽的秋风', 'drizzling|下着毛毛雨的',
+    'pouring rain|倾盆大雨', 'a howling wind|呼啸的狂风', 'dark clouds gathered|乌云聚集',
+    'the storm raged on|暴风雨肆虐着', 'snowflakes drifted down|雪花飘落', 'frost formed on|冰霜凝结在'
+  ],
+  '🌙 夜晚/光影': [
+    'under the starry sky|在星空下', 'moonlight cast a glow|月光洒下一片光辉',
+    'the flickering candlelight|摇曳的烛光', 'shadows danced on the wall|影子在墙上舞动',
+    'the dim streetlight|昏暗的路灯', 'twilight descended|暮色降临', 'the first light of dawn|黎明的第一缕光',
+    'the sun sank below the horizon|太阳沉入地平线', 'a dark silhouette against the sky|天空映衬下的黑影',
+    'the room was bathed in golden light|房间沐浴在金色光芒中', 'stars twinkled overhead|星星在头顶闪烁',
+    'darkness swallowed everything|黑暗吞噬了一切'
+  ],
+  '🔇 声音/寂静': [
+    'deafening silence|震耳欲聋的寂静', 'footsteps echoed|脚步声回荡', 'a faint rustle|轻微的沙沙声',
+    'the whisper of the wind|风的低语', 'leaves crunched underfoot|落叶在脚下嘎吱作响',
+    'an eerie stillness|诡异的寂静', 'the murmur of voices|低语的嗡嗡声', 'a sudden creak|突然的吱呀声',
+    'the distant rumble of thunder|远处雷声隆隆', 'silence hung in the air|寂静笼罩在空气中',
+    'a shrill cry pierced the silence|一声尖锐的哭喊划破寂静', 'the gentle lapping of waves|波浪轻柔的拍打声'
+  ],
+  '🌈 氛围/气氛': [
+    'a warm and inviting glow|温暖而诱人的光芒', 'an air of tension filled the room|紧张气氛充满房间',
+    'the cozy warmth of the fireplace|壁炉舒适的温暖', 'an oppressive heat|令人窒息的炎热',
+    'a sense of peace settled over|一片宁静降临于', 'the atmosphere was thick with anticipation|空气中弥漫着期待',
+    'a chill ran through the air|空气中透着一股寒意', 'laughter filled the air|笑声充满空气',
+    'an overwhelming sense of tranquility|一种无法抗拒的宁静', 'the gloomy atmosphere|阴郁的气氛',
+    'a festive mood permeated|节日的氛围弥漫着', 'serenity washed over everything|宁静洗涤了一切'
+  ],
+  '🌿 自然/环境': [
+    'towering trees|参天大树', 'a winding path|蜿蜒的小路', 'the vast expanse of the ocean|广阔的海洋',
+    'snow-capped mountains|白雪覆盖的山峰', 'dew glistened on the grass|露珠在草上闪闪发光',
+    'a carpet of wildflowers|一片野花如毯', 'the rustling leaves|沙沙作响的树叶',
+    'mist clung to the valley|薄雾笼罩山谷', 'the roaring waterfall|轰鸣的瀑布',
+    'branches swayed in the wind|树枝在风中摇曳', 'footprints in the fresh snow|新雪中的脚印',
+    'the dense fog obscured everything|浓雾遮蔽了一切'
+  ]
+};
+
+// ═══════════════════════════════════════════
+// 读后续写 · 动作描写词库（5大类 60+词汇）
+// ═══════════════════════════════════════════
+const actionVocabCategories = {
+  '👀 眼神/目光': [
+    'cast a glance at|瞥了一眼', 'stared blankly at|茫然地盯着', 'exchanged a look|交换了一个眼神',
+    'avoided eye contact|避开目光接触', 'gazed into the distance|凝视远方', 'tears welled up in her eyes|泪水涌上她的眼眶',
+    'narrowed his eyes|眯起眼睛', 'eyes sparkled with excitement|眼中闪烁着兴奋',
+    'averted her gaze|移开了她的视线', 'locked eyes with|与...目光锁定',
+    'fix one\'s eyes upon|目不转睛地看着', 'eyes darted around the room|目光在房间里扫视'
+  ],
+  '🫀 心跳/身体反应': [
+    'heart pounded wildly|心脏狂跳', 'heart skipped a beat|心跳漏了一拍', 'blood rushed to her cheeks|血涌上她的脸颊',
+    'a chill ran down his spine|一股寒意沿着脊柱流下', 'trembled uncontrollably|不受控制地颤抖',
+    'sweat trickled down his forehead|汗水从他额头滴落', 'face went pale|脸色变得苍白',
+    'a lump formed in her throat|喉咙哽咽', 'stomach churned with anxiety|胃因焦虑而翻腾',
+    'pulse quickened|脉搏加快', 'knees went weak|膝盖发软', 'shoulders slumped in defeat|肩膀因沮丧而耷拉下来'
+  ],
+  '🚶 步态/移动': [
+    'pace back and forth|来回踱步', 'strode purposefully toward|有目的地走向',
+    'tiptoed quietly out of|踮着脚尖悄悄走出', 'staggered backward|踉跄后退',
+    'dashed out of the room|冲出房间', 'crept stealthily toward|悄悄潜向', 'stumbled over|绊倒在',
+    'sprang to his feet|跳起来', 'dragged herself along|拖着身子前行', 'wandered aimlessly|漫无目的地游荡',
+    'stormed out angrily|怒气冲冲地走出去', 'shuffled nervously|紧张地拖着脚步'
+  ],
+  '🤲 手势/动作': [
+    'clenched his fists|握紧拳头', 'wiped away tears|擦去泪水', 'threw her arms around|张开双臂拥抱',
+    'held out a trembling hand|伸出一只颤抖的手', 'buried his face in his hands|把脸埋进双手',
+    'gave a gentle squeeze|轻轻捏了一下', 'cupped her face in his hands|用手捧着她的脸',
+    'pointed a shaking finger at|用颤抖的手指指着', 'folded her arms across her chest|双臂交叉在胸前',
+    'patted him on the shoulder|拍了拍他的肩膀', 'ran her fingers through her hair|用手指梳理头发',
+    'held on tightly to|紧紧抓住'
+  ],
+  '🗣️ 说话/声音': [
+    'in a trembling voice|用颤抖的声音', 'whispered softly|轻声低语', 'stammered nervously|紧张地结巴',
+    'blurted out|脱口而出', 'murmured under his breath|低声咕哝', 'choked back tears|忍住泪水',
+    'uttered a barely audible|说了一句几乎听不见的', 'spoke through gritted teeth|咬牙切齿地说',
+    'her voice cracked with emotion|她的声音因情绪而破裂', 'muttered to himself|自言自语地嘟囔',
+    'let out a heavy sigh|发出一声沉重的叹息', 'managed a weak smile and said|勉强挤出一个微弱的笑容说'
+  ]
+};
+
+// ═══════════════════════════════════════════
+// 读后续写 · 情节过渡词库（4大类 40+短语）
+// ═══════════════════════════════════════════
+const transitionVocabCategories = {
+  '⏰ 时间推移': [
+    'After what seemed like an eternity|过了仿佛永恒之后', 'Before long|不久之后',
+    'In the blink of an eye|在眨眼之间', 'As time went by|随着时间的推移',
+    'Moments later|片刻之后', 'The following morning|第二天早上',
+    'Days turned into weeks|日子一天天过去', 'At long last|终于/总算',
+    'No sooner had...than|刚一...就', 'Hardly had...when|还没...就',
+    'As dusk fell|当夜幕降临时', 'Years had passed since|自...以来多年过去了'
+  ],
+  '🔄 转折/变化': [
+    'Just when all hope seemed lost|就在一切希望似乎破灭时', 'Out of the blue|突如其来地',
+    'Much to my surprise|令我大为惊讶的是', 'Contrary to what I had expected|与我预期的相反',
+    'The tables had turned|局势已经逆转', 'Things took an unexpected turn|事情发生了意想不到的转折',
+    'It was then that a thought struck me|就在那时我突然想到', 'Little did I know that|我完全不知道',
+    'All of a sudden|突然之间', 'A wave of realization washed over me|一股领悟的感觉涌上心头'
+  ],
+  '🔗 因果连接': [
+    'That was the moment that changed everything|那是改变一切的时刻',
+    'It was this realization that prompted me to|正是这一认识促使我',
+    'Driven by a newfound determination|被新获得的决心所驱动', 'With that thought in mind|带着那个想法',
+    'Spurred by a sense of urgency|被紧迫感所激励', 'Encouraged by her words|被她的话所鼓舞',
+    'It dawned on me that|我渐渐明白', 'Overcome with guilt|被愧疚所淹没',
+    'Fueled by a mix of fear and hope|被恐惧与希望交织的情感所驱动',
+    'What happened next was something I could never have anticipated|接下来发生的事我永远无法预料'
+  ],
+  '💭 内心独白/反思': [
+    'A voice in my head whispered|脑海中一个声音低语', 'I couldn\'t help but wonder|我不禁想',
+    'It occurred to me that|我想到', 'The question echoed in my mind|那个问题在脑海中回荡',
+    'Deep down, I knew that|在内心深处，我知道', 'Never had I felt so|我从未感到如此',
+    'I was torn between|我在...之间左右为难', 'Memories came flooding back|回忆如潮水般涌来',
+    'If only I had|要是我当初...就好了', 'From that day forward|从那天起',
+    'Looking back, I realize that|回头来看，我意识到', 'What truly mattered was not...but...|真正重要的不是...而是...'
+  ]
+};
+
+// ═══════════════════════════════════════════
+// 读后续写 · 情节构思模板
+// ═══════════════════════════════════════════
+const plotTemplates = [
+  {
+    name: '🚨 危机救援型',
+    desc: '主人公目睹/经历突发事件(事故/受伤/自然灾害)→克服恐惧→施救→成功→感悟成长',
+    para1: '描述危机+心理冲击 → 决定行动（尽管害怕）→ 救援过程+具体动作+困难',
+    para2: '结果（成功/虽败犹荣）→ 情感反应 → 主题升华（勇气/责任感/人性的温暖）',
+    tips: '核心词：courage, responsibility, kindness, life-changing'
+  },
+  {
+    name: '💔 误解和解型',
+    desc: '朋友/亲子/师生之间产生误解→冷战/疏远→某个契机(一封信/一句话/一个场景)→真相大白→和解',
+    para1: '误解加深+情绪描写（愤怒/受伤/困惑）→ 关键事件（发现真相/回忆往事）',
+    para2: '内心反思 → 主动道歉/沟通 → 关系修复 → 感悟（沟通/信任/理解的重要性）',
+    tips: '核心词：misunderstanding, apologize, forgive, communication, trust'
+  },
+  {
+    name: '🌱 成长蜕变型',
+    desc: '主人公面对挑战/失败/恐惧→最初胆怯/逃避→经历某事/得到鼓励→振作→成功→感悟蜕变',
+    para1: '描述困境+内心挣扎 → 转折点（某人/某事给予勇气/启发）→ 开始行动',
+    para2: '克服困难的过程 → 成功/进步 → 回望当初的软弱 → 感悟成长的真谛',
+    tips: '核心词：overcome, challenge, transform, confidence, growth mindset'
+  },
+  {
+    name: '🎁 善意传递型',
+    desc: '主人公受到陌生人的帮助→深受触动→将善意传递→形成善意链→感悟善良的意义',
+    para1: '困境中的无助+陌生人的善举 → 深受感动 → 萌生传递善意的想法',
+    para2: '传递善意的具体行动+对方的反应 → 善意链延伸 → 感悟（善良的力量/世界因善意而温暖）',
+    tips: '核心词：kindness, stranger, touched, pay it forward, ripple effect'
+  },
+  {
+    name: '🏆 比赛/挑战型',
+    desc: '比赛/演讲/展示前紧张→过程中出现意外/困难→坚持/调整→虽败犹荣/险胜→团队/努力感悟',
+    para1: '赛前氛围+紧张 → 比赛中+突发状况 → 关键时刻的反应（队友鼓励/自我突破）',
+    para2: '结果（赢/输不重要）→ 情感反应 → 感悟（努力的意义/团队的力量/过程的收获）',
+    tips: '核心词：compete, team spirit, effort, perseverance, process over outcome'
+  },
+  {
+    name: '🏠 归家/团圆型',
+    desc: '离家远行/分离/思念→某个契机触发回忆→归家/重逢→发现变化(自己/家人)→感悟家/亲情的意义',
+    para1: '触发思乡/思亲的事件 → 回忆与情感 → 决定行动（回家/联系）',
+    para2: '重逢/归家的场景描写 → 发现 → 感悟（家的意义/亲情的珍贵/根的重要性）',
+    tips: '核心词：home, family, reunion, nostalgia, belonging, roots'
+  }
+];
+
+// Theme vocab
+const techVocab = ['artificial intelligence|人工智能', 'innovation|创新', 'digital|数字的', 'device|设备', 'data|数据', 'software|软件', 'network|网络', 'automatic|自动的', 'monitor|监控', 'code|代码', 'revolution|革命', 'advanced|先进的', 'generate|产生', 'remote|远程的', 'virtual|虚拟的'];
+const envVocab = ['sustainable|可持续的', 'pollution|污染', 'carbon|碳', 'emission|排放', 'recycle|回收', 'conservation|保护', 'ecosystem|生态系统', 'climate|气候', 'resource|资源', 'energy|能源', 'waste|浪费/废物', 'wildlife|野生动物', 'species|物种', 'habitat|栖息地', 'biodiversity|生物多样性'];
+const healthVocab = ['mental|心理的', 'physical|身体的', 'emotion|情绪', 'stress|压力', 'anxiety|焦虑', 'well-being|福祉', 'hormone|激素', 'mood|情绪', 'nutrition|营养', 'behavior|行为', 'attitude|态度', 'motivation|动力', 'confidence|信心', 'satisfaction|满足', 'therapy|治疗'];
+const socialVocab = ['culture|文化', 'tradition|传统', 'community|社区', 'society|社会', 'education|教育', 'economy|经济', 'population|人口', 'development|发展', 'global|全球的', 'diversity|多样性', 'identity|身份', 'value|价值', 'policy|政策', 'issue|议题', 'heritage|遗产'];
+
+// 易混词辨析
+const confusingPairs = [
+  'alone(独自一人) vs lonely(孤独的)', 'affect(影响v.) vs effect(效果n.)',
+  'rise(上升-不及物) vs raise(举起-及物)', 'lie-lay-lain(躺) vs lay-laid-laid(放置)',
+  'ensure(确保) vs insure(保险) vs assure(保证)', 'adapt(适应/改编) vs adopt(采纳/收养)',
+  'acquire(获得) vs require(需要) vs inquire(询问)', 'apply to(应用于) vs apply for(申请)',
+  'result in(导致) vs result from(由...引起)', 'consist of(由...组成) vs consist in(在于)',
+  'compare to(比作) vs compare with(比较)', 'familiar to(为...熟悉) vs familiar with(对...熟悉)',
+  'attend(出席) vs join(加入) vs participate(参与)', 'discover(发现已有) vs invent(发明) vs create(创造)',
+  'damage(部分损坏) vs destroy(彻底摧毁) vs ruin(毁灭)', 'specially(专门地) vs especially(尤其)',
+  'besides(除...还-包括) vs except(除...外-不包括)', 'affect(不好的影响) vs influence(潜移默化) vs impact(强烈冲击)',
+  'remain(保持) vs maintain(维持/保养) vs retain(保留)', 'recover(康复) vs restore(修复) vs refresh(恢复精力)'
+];
+
+// ==================== RENDER FUNCTIONS ====================
+function makeVocabItem(word, meaning, pos) {
+  const key = `vocab_${word.replace(/[^a-z]/gi,'').toLowerCase()}`;
+  const learned = localStorage.getItem(key) === '1';
+  return `<div class="vocab-card${learned?' learned':''}" data-key="${key}" data-word="${word.replace(/"/g,'&quot;')}">
+    <div class="vocab-card-inner">
+      <div class="vocab-card-front" onclick="event.stopPropagation();flipCard(this.parentElement.parentElement)">
+        <span class="learned-star">${learned?'⭐':''}</span>
+        <button class="tts-btn tts-btn-card" onclick="event.stopPropagation();TTSManager.speakWord(this.closest('.vocab-card').getAttribute('data-word'), this.closest('.vocab-card-front'))">🔊</button>
+        <span class="word">${word}</span>
+        <span class="pos-tag">${pos||''}</span>
+      </div>
+      <div class="vocab-card-back">
+        <span class="meaning-hint">${meaning}</span>
+        <div class="type-row">
+          <input type="text" class="typing-input" placeholder="输入英文拼写..." autocomplete="off"
+            onclick="event.stopPropagation()"
+            onkeydown="if(event.key==='Enter')checkSpelling(this.closest('.vocab-card'))">
+          <button class="check-btn" onclick="event.stopPropagation();checkSpelling(this.closest('.vocab-card'))">✓</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function makePhraseItem(text) {
+  const key = `phrase_${text.substring(0,30).replace(/[^a-z]/gi,'')}`;
+  const learned = localStorage.getItem(key) === '1';
+  return `<li class="${learned?'learned':''}" data-text="${text.replace(/"/g,'&quot;')}" onclick="togglePhrase(this,'${key}')"><button class="tts-btn tts-btn-inline" onclick="event.stopPropagation();TTSManager.speakWord(this.parentElement.getAttribute('data-text'), this.parentElement)">🔊</button>${text}</li>`;
+}
+
+function renderVocabGrid(containerId, items, category) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = items.map(item => {
+    const parts = item.split('|');
+    return makeVocabItem(parts[0], parts[1], parts[2]||category);
+  }).join('');
+}
+
+// Special render for upgrade pairs (arrow format, no flip)
+function renderUpgradeGrid(containerId, items) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = items.map(pair => {
+    const key = `upgrade_${pair.low.replace(/[^a-z]/gi,'').toLowerCase()}`;
+    const learned = localStorage.getItem(key) === '1';
+    const word = pair.high; // pipe-separated answers
+    return `<div class="vocab-card${learned?' learned':''}" data-key="${key}" data-word="${word.replace(/"/g,'&quot;')}">
+      <div class="vocab-card-inner">
+        <div class="vocab-card-front" onclick="event.stopPropagation();flipCard(this.parentElement.parentElement)">
+          <span class="learned-star">${learned?'⭐':''}</span>
+          <button class="tts-btn tts-btn-card" onclick="event.stopPropagation();TTSManager.speakWord(this.closest('.vocab-card').getAttribute('data-word'), this.closest('.vocab-card-front'))">🔊</button>
+          <span class="word">${pair.low}</span>
+          <span class="pos-tag">升级替换</span>
+        </div>
+        <div class="vocab-card-back">
+          <span class="meaning-hint">${pair.zh} → ${pair.high.split('|').join(' / ')}</span>
+          <div class="type-row">
+            <input type="text" class="typing-input" placeholder="输入任一替换词..." autocomplete="off"
+              onclick="event.stopPropagation()"
+              onkeydown="if(event.key==='Enter')checkSpelling(this.closest('.vocab-card'))">
+            <button class="check-btn" onclick="event.stopPropagation();checkSpelling(this.closest('.vocab-card'))">✓</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderEmotionCategories(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  let html = '';
+  for (const [category, words] of Object.entries(emotionCategories)) {
+    html += `<h3 style="color:var(--text);margin:16px 0 8px;font-size:1.05em;border-left:3px solid var(--accent);padding-left:10px">${category}（${words.length}词）</h3>`;
+    html += '<div class="vocab-grid">';
+    html += words.map(item => {
+      const parts = item.split('|');
+      return makeVocabItem(parts[0], parts[1], parts[2] || category);
+    }).join('');
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function renderPhraseList(containerId, items) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = items.map(item => makePhraseItem(item)).join('');
+}
+
+function renderPlotTemplates(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  let html = '';
+  plotTemplates.forEach((t, i) => {
+    html += `<div style="background:var(--bg-card-alt);border-radius:12px;padding:16px;margin:12px 0;border-left:4px solid var(--accent)">
+      <h3 style="color:var(--accent);margin:0 0 8px;font-size:1.05em">${t.name}</h3>
+      <p style="margin:4px 0;font-size:0.9em"><strong>📖 故事线：</strong>${t.desc}</p>
+      <p style="margin:4px 0;font-size:0.88em"><strong>📝 第一段：</strong>${t.para1}</p>
+      <p style="margin:4px 0;font-size:0.88em"><strong>📝 第二段：</strong>${t.para2}</p>
+      <p style="margin:4px 0;font-size:0.82em;color:var(--sky)"><strong>🎯 高分词汇方向：</strong>${t.tips}</p>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// Reusable: render a category-based vocab bank with flip cards
+function renderVocabCategories(containerId, categories) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  let html = '';
+  for (const [category, words] of Object.entries(categories)) {
+    html += `<h3 style="color:var(--text);margin:16px 0 8px;font-size:1.05em;border-left:3px solid var(--accent);padding-left:10px">${category}（${words.length}词）</h3>`;
+    html += '<div class="vocab-grid">';
+    html += words.map(item => {
+      const parts = item.split('|');
+      return makeVocabItem(parts[0], parts[1], parts[2] || category);
+    }).join('');
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+// ==================== FLIP CARD INTERACTIONS ====================
+function flipCard(card) {
+  if (card.classList.contains('error-shake') || card.classList.contains('correct-flash')) return;
+  card.classList.toggle('flipped');
+  playSound('flip');
+  if (card.classList.contains('flipped')) {
+    // Auto-focus the typing input
+    setTimeout(() => {
+      const input = card.querySelector('.typing-input');
+      if (input) { input.focus(); input.value = ''; }
+    }, 300);
+  }
+}
+
+function checkSpelling(card) {
+  const input = card.querySelector('.typing-input');
+  if (!input) return;
+  const typed = input.value.trim();
+  const correct = card.dataset.word;
+  // Support multiple answers separated by |
+  const correctAnswers = correct.split('|').map(s => s.trim().toLowerCase());
+
+  if (!typed) return;
+
+  if (correctAnswers.includes(typed.toLowerCase())) {
+    // CORRECT!
+    card.classList.add('correct-flash');
+    card.classList.add('learned');
+    card.classList.remove('error-shake');
+    // Update star
+    const star = card.querySelector('.learned-star');
+    if (star) star.textContent = '⭐';
+    // Mark as learned
+    const key = card.dataset.key;
+    localStorage.setItem(key, '1');
+    localStorage.setItem(key + '_date', new Date().toISOString().split('T')[0]);
+    playSound('correct');
+    // Flip back after celebration
+    setTimeout(() => {
+      card.classList.remove('flipped', 'correct-flash');
+      updateAllStats();
+    }, 900);
+  } else {
+    // WRONG!
+    card.classList.add('error-shake');
+    card.classList.remove('correct-flash');
+    input.style.color = '#e74c3c';
+    playSound('error');
+    // Show the first correct answer briefly, then flip back
+    setTimeout(() => {
+      input.value = '';
+      input.placeholder = '正确答案: ' + correctAnswers[0];
+      input.style.color = '';
+      card.classList.remove('flipped', 'error-shake');
+      setTimeout(() => { input.placeholder = '输入英文拼写...'; }, 1500);
+    }, 800);
+  }
+}
+
+// ==================== SOUND EFFECTS (Web Audio API - no files needed) ====================
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+// ==================== TTS MANAGER (Web Speech API) ====================
+const TTSManager = (function() {
+  const STORAGE_KEY = 'tts_settings';
+  const CHUNK_THRESHOLD = 200;
+  const DEFAULT_RATE = 0.85;
+  let settings = loadSettings();
+  let currentVoice = null;
+  let utteranceQueue = [];
+  let isSpeakingFlag = false;
+  let currentEl = null;
+  let onStartCb = null;
+  let onEndCb = null;
+
+  function loadSettings() {
+    try { const s = localStorage.getItem(STORAGE_KEY); if (s) return JSON.parse(s); } catch(e) {}
+    return { voiceName: null, rate: DEFAULT_RATE, volume: 1.0 };
+  }
+  function saveSettings() { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); }
+
+  function findBestVoice() {
+    const voices = speechSynthesis.getVoices();
+    if (!voices.length) return null;
+    if (settings.voiceName) { const m = voices.find(v => v.name === settings.voiceName); if (m) return m; }
+    const tiers = [
+      v => v.lang.startsWith('en-US') && /Google|Natural|Samantha|Zira|Microsoft|Karen/i.test(v.name),
+      v => v.lang.startsWith('en-GB') && /Female|Google|Fiona/i.test(v.name),
+      v => v.lang.startsWith('en-US'),
+      v => v.lang.startsWith('en-GB'),
+      v => v.lang.startsWith('en-')
+    ];
+    for (const fn of tiers) { const v = voices.find(fn); if (v) return v; }
+    return voices[0];
+  }
+
+  function splitText(text) {
+    if (text.length <= CHUNK_THRESHOLD) return [text];
+    const sentences = text.match(/[^.!?]+[.!?]+[\s]*/g);
+    if (!sentences) return [text];
+    const chunks = []; let cur = '';
+    for (const s of sentences) {
+      if ((cur + s).length > CHUNK_THRESHOLD && cur) { chunks.push(cur.trim()); cur = s; }
+      else { cur += s; }
+    }
+    if (cur.trim()) chunks.push(cur.trim());
+    if (chunks.length === 1 && chunks[0].length > CHUNK_THRESHOLD) {
+      const parts = chunks[0].split(/([,;:—–]+[\s]*)/g);
+      const rebuilt = []; let tmp = '';
+      for (const p of parts) {
+        if ((tmp + p).length > CHUNK_THRESHOLD && tmp) { rebuilt.push(tmp.trim()); tmp = p; }
+        else { tmp += p; }
+      }
+      if (tmp.trim()) rebuilt.push(tmp.trim());
+      if (rebuilt.length > 1) return rebuilt;
+    }
+    return chunks;
+  }
+
+  function updateStopFloat(show) {
+    const btn = document.getElementById('ttsStopFloat');
+    if (btn) btn.style.display = show ? 'flex' : 'none';
+  }
+
+  function clearHighlight() {
+    if (currentEl) { currentEl.classList.remove('tts-speaking'); currentEl = null; }
+  }
+
+  function setHighlight(el) {
+    clearHighlight();
+    if (el) { currentEl = el; el.classList.add('tts-speaking'); }
+  }
+
+  function speakNext() {
+    if (utteranceQueue.length === 0) {
+      isSpeakingFlag = false; updateStopFloat(false); clearHighlight();
+      if (onEndCb) { const cb = onEndCb; onEndCb = null; cb(); }
+      return;
+    }
+    const chunk = utteranceQueue.shift();
+    const utter = new SpeechSynthesisUtterance(chunk);
+    utter.voice = currentVoice;
+    utter.rate = settings.rate;
+    utter.volume = settings.volume;
+    utter.onstart = function() { isSpeakingFlag = true; };
+    utter.onend = function() { setTimeout(speakNext, 80); };
+    utter.onerror = function(e) {
+      if (e.error === 'canceled' || e.error === 'interrupted') {
+        utteranceQueue = []; isSpeakingFlag = false; updateStopFloat(false); clearHighlight();
+        return;
+      }
+      setTimeout(speakNext, 80);
+    };
+    speechSynthesis.speak(utter);
+  }
+
+  return {
+    getSettings: function() { return settings; },
+    setRate: function(rate) { settings.rate = Math.max(0.5, Math.min(2.0, rate)); saveSettings(); },
+    setVoice: function(name) { settings.voiceName = name; currentVoice = null; saveSettings(); },
+    getAvailableVoices: function() { return speechSynthesis.getVoices().filter(v => v.lang.startsWith('en-')); },
+    isSpeaking: function() { return isSpeakingFlag || speechSynthesis.speaking; },
+
+    speak: function(text, opts) {
+      opts = opts || {};
+      const clean = (text || '').trim();
+      if (!clean) return false;
+      this.stop();
+      if (!currentVoice) currentVoice = findBestVoice();
+      utteranceQueue = splitText(clean);
+      onStartCb = opts.onStart || null;
+      onEndCb = opts.onEnd || null;
+      updateStopFloat(true);
+      if (opts.el) setHighlight(opts.el);
+      if (opts.rate !== undefined) settings.rate = opts.rate;
+      if (onStartCb) onStartCb();
+      speakNext();
+      return true;
+    },
+
+    speakWord: function(text, el) {
+      return this.speak(text, { rate: DEFAULT_RATE, el: el });
+    },
+
+    stop: function() {
+      speechSynthesis.cancel();
+      utteranceQueue = [];
+      isSpeakingFlag = false;
+      updateStopFloat(false);
+      clearHighlight();
+      onEndCb = null;
+    },
+
+    init: function() {
+      if (speechSynthesis.getVoices().length === 0) {
+        speechSynthesis.onvoiceschanged = function() { currentVoice = findBestVoice(); };
+      } else { currentVoice = findBestVoice(); }
+      if (!document.getElementById('ttsStopFloat')) {
+        const btn = document.createElement('button');
+        btn.id = 'ttsStopFloat'; btn.className = 'tts-stop-float';
+        btn.innerHTML = '⏹️'; btn.title = '停止朗读';
+        btn.style.display = 'none';
+        btn.addEventListener('click', function(e) { e.stopPropagation(); TTSManager.stop(); });
+        document.body.appendChild(btn);
+      }
+      // Handle page visibility changes
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && TTSManager.isSpeaking()) {
+          // Chrome may have paused speech; restart any remaining queue
+          updateStopFloat(true);
+        }
+      });
+      // Warm up TTS on first interaction
+      const warmUp = function() {
+        const u = new SpeechSynthesisUtterance(''); u.volume = 0;
+        speechSynthesis.speak(u);
+        document.removeEventListener('click', warmUp);
+        document.removeEventListener('touchstart', warmUp);
+      };
+      document.addEventListener('click', warmUp, { once: true });
+      document.addEventListener('touchstart', warmUp, { once: true });
+    }
+  };
+})();
+
+// ═══ TTS Sentence Helper ═══
+function ttsSentence(el, text) {
+  if (TTSManager.isSpeaking()) {
+    TTSManager.stop();
+    return;
+  }
+  TTSManager.speak(text, {
+    rate: 0.82,
+    el: el,
+    onStart: function() { updateTtsBtn(el, true); },
+    onEnd: function() { updateTtsBtn(el, false); }
+  });
+}
+
+function updateTtsBtn(el, speaking) {
+  const block = el.closest('.sentence-block');
+  if (!block) return;
+  const btn = block.querySelector('.tts-sentence-btn');
+  if (!btn) return;
+  btn.innerHTML = speaking ? '⏹️ 停止朗读' : '▶️ 朗读句子';
+  btn.style.background = speaking ? 'var(--error)' : '#8E44AD';
+}
+
+function playSound(type) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === 'correct') {
+      // Happy ascending two-note: C5→E5
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523, ctx.currentTime);       // C5
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.08); // E5
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.28);
+    } else if (type === 'error') {
+      // Low buzz: two short pulses at ~200Hz
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(180, ctx.currentTime);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.setValueAtTime(0.0, ctx.currentTime + 0.13);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime + 0.16);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.32);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.32);
+    } else if (type === 'flip') {
+      // Soft click
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, ctx.currentTime);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.06);
+    }
+  } catch(e) { /* Silently fail if audio not available */ }
+}
+
+function renderCheckinGrid() {
+  const grid = document.getElementById('checkinGrid');
+  if (!grid) return;
+  let html = '';
+  for (let i = 1; i <= 40; i++) {
+    const key = `checkin_day_${i}`;
+    const checked = localStorage.getItem(key) === '1';
+    const today = new Date();
+    const startDate = new Date(localStorage.getItem('start_date') || today.toISOString().split('T')[0]);
+    const dayDiff = Math.floor((today - startDate) / (1000*60*60*24)) + 1;
+    const isToday = (dayDiff === i);
+    html += `<div class="checkin-day${checked?' checked':''}${isToday?' today':''}"
+      onclick="toggleCheckin(${i})" title="第${i}天">
+      Day ${i}<br><small>${checked?'✅':'⬜'}</small>
+    </div>`;
+  }
+  grid.innerHTML = html;
+  updateCheckinStats();
+}
+
+function renderReviewQueue() {
+  const container = document.getElementById('reviewQueue');
+  if (!container) return;
+  const today = new Date().toISOString().split('T')[0];
+  let reviewItems = [];
+  // Check all vocab items for review needs
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('vocab_') && localStorage.getItem(key) === '1') {
+      const learnedDate = localStorage.getItem(key + '_date');
+      if (learnedDate) {
+        const daysSince = Math.floor((new Date(today) - new Date(learnedDate)) / (1000*60*60*24));
+        // Ebbinghaus: review at 1, 2, 4, 7, 15, 30 days
+        const reviewDays = [1, 2, 4, 7, 15, 30];
+        if (reviewDays.includes(daysSince)) {
+          reviewItems.push({key, daysSince});
+        }
+      }
+    }
+  }
+  if (reviewItems.length === 0) {
+    container.innerHTML = '<p style="color:#27ae60">🎉 今天没有需要复习的词汇！继续保持！</p>';
+  } else {
+    container.innerHTML = `<p>今天需要复习 <strong>${reviewItems.length}</strong> 个词汇（第${reviewItems[0]?.daysSince||''}天复习）：</p>` +
+      reviewItems.slice(0, 30).map(item => {
+        const word = item.key.replace('vocab_', '');
+        return `<div class="review-item"><button class="tts-btn tts-btn-inline" style="width:40px;height:40px;min-width:40px;min-height:40px;font-size:0.85em;margin-right:6px" onclick="event.stopPropagation();TTSManager.speakWord('${word}', this)">🔊</button><span>📌 ${word}</span><span style="color:#999">${item.daysSince}天前学习</span></div>`;
+      }).join('');
+  }
+}
+
+// ==================== ACTIONS ====================
+function toggleVocab(el, key) {
+  const isLearned = localStorage.getItem(key) === '1';
+  if (isLearned) {
+    localStorage.removeItem(key);
+    localStorage.removeItem(key + '_date');
+    el.classList.remove('learned');
+    el.querySelector('input').checked = false;
+  } else {
+    localStorage.setItem(key, '1');
+    localStorage.setItem(key + '_date', new Date().toISOString().split('T')[0]);
+    el.classList.add('learned');
+    el.querySelector('input').checked = true;
+  }
+  updateAllStats();
+}
+
+function togglePhrase(el, key) {
+  const isLearned = localStorage.getItem(key) === '1';
+  if (isLearned) {
+    localStorage.removeItem(key);
+    el.classList.remove('learned');
+  } else {
+    localStorage.setItem(key, '1');
+    el.classList.add('learned');
+  }
+  updateAllStats();
+}
+
+function toggleCheckin(day) {
+  const key = `checkin_day_${day}`;
+  const isChecked = localStorage.getItem(key) === '1';
+  if (isChecked) {
+    localStorage.removeItem(key);
+  } else {
+    localStorage.setItem(key, '1');
+    if (!localStorage.getItem('start_date')) {
+      localStorage.setItem('start_date', new Date().toISOString().split('T')[0]);
+    }
+  }
+  renderCheckinGrid();
+}
+
+function checkinToday() {
+  const today = new Date();
+  const startDate = new Date(localStorage.getItem('start_date') || today.toISOString().split('T')[0]);
+  const dayNum = Math.floor((today - startDate) / (1000*60*60*24)) + 1;
+  if (dayNum >= 1 && dayNum <= 40) {
+    localStorage.setItem(`checkin_day_${dayNum}`, '1');
+  }
+  renderCheckinGrid();
+}
+
+function resetCheckins() {
+  if (confirm('确定要重置所有打卡记录吗？此操作不可撤销！')) {
+    for (let i = 1; i <= 40; i++) localStorage.removeItem(`checkin_day_${i}`);
+    localStorage.removeItem('start_date');
+    renderCheckinGrid();
+  }
+}
+
+function exportData() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    data[key] = localStorage.getItem(key);
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `英语学习数据_${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function saveNote() {
+  const note = document.getElementById('dailyNote').value;
+  if (!note.trim()) return;
+  const date = new Date().toISOString().split('T')[0];
+  const key = `note_${date}`;
+  localStorage.setItem(key, note);
+  document.getElementById('dailyNote').value = '';
+  renderNotes();
+  alert('✅ 笔记已保存！');
+}
+
+function renderNotes() {
+  const container = document.getElementById('savedNotes');
+  if (!container) return;
+  let notes = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('note_')) {
+      notes.push({date: key.replace('note_', ''), content: localStorage.getItem(key)});
+    }
+  }
+  notes.sort((a,b) => b.date.localeCompare(a.date));
+  container.innerHTML = notes.slice(0, 10).map(n =>
+    `<div style="padding:8px;margin:5px 0;background:#f8f9fa;border-radius:6px;border-left:3px solid #3498db">
+      <strong>${n.date}</strong><br>${n.content}</div>`
+  ).join('') || '<p style="color:#999">暂无笔记</p>';
+}
+
+function toggleById(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function searchVocab(input, gridId) {
+  const query = input.value.toLowerCase();
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  const items = grid.querySelectorAll('.vocab-card');
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+
+function updateCheckinStats() {
+  let checked = 0, streak = 0, maxStreak = 0;
+  for (let i = 1; i <= 40; i++) {
+    if (localStorage.getItem(`checkin_day_${i}`) === '1') {
+      checked++;
+      streak++;
+      maxStreak = Math.max(maxStreak, streak);
+    } else {
+      streak = 0;
+    }
+  }
+  document.getElementById('checkinDays').textContent = checked;
+  document.getElementById('streakDays').textContent = maxStreak;
+  document.getElementById('checkinProgress').style.width = (checked/40*100) + '%';
+  document.getElementById('checkinProgress').textContent = `${checked}/40天`;
+}
+
+function updateAllStats() {
+  // Count all vocab words
+  let totalVocab = 0, learnedVocab = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('vocab_')) {
+      totalVocab++;
+      if (localStorage.getItem(key) === '1') learnedVocab++;
+    }
+  }
+  // Approximate total from data arrays
+  const approxTotal = academicVerbs.length + academicNouns.length + academicAdjs.length +
+    clozeVerbs.length + transitions.length + causeEffect.length + additions.length + otherLogic.length +
+    emotionVocab.length + techVocab.length + envVocab.length + healthVocab.length + socialVocab.length;
+
+  document.getElementById('totalWords').textContent = approxTotal;
+  document.getElementById('learnedWords').textContent = learnedVocab;
+  document.getElementById('progressPct').textContent = Math.round(learnedVocab / approxTotal * 100) + '%';
+
+  // Update progress bars
+  const readingTotal = academicVerbs.length + academicNouns.length + academicAdjs.length;
+  let readingLearned = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('vocab_') && localStorage.getItem(key) === '1') readingLearned++;
+  }
+  const readingPct = Math.min(100, Math.round(readingLearned / readingTotal * 100));
+  const readingBar = document.getElementById('readingProgress');
+  if (readingBar) { readingBar.style.width = readingPct + '%'; readingBar.textContent = readingPct + '%'; }
+
+  const clozeBar = document.getElementById('clozeProgress');
+  if (clozeBar) { clozeBar.style.width = Math.min(100, Math.round(readingLearned / clozeVerbs.length * 100)) + '%'; }
+
+  updateCheckinStats();
+}
+
+// ==================== TAB SWITCHING ====================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    const tabId = 'tab-' + btn.dataset.tab;
+    document.getElementById(tabId).classList.add('active');
+    if (btn.dataset.tab === 'daily') renderCheckinGrid();
+    if (btn.dataset.tab === 'review') renderReviewQueue();
+  });
+});
+
+// ==================== INITIALIZATION ====================
+// ═══════════════════════════════════════════
+// 长难句训练数据（45+句，6大场景分类）
+// ═══════════════════════════════════════════
+const sentenceScenarios = {
+  '🤖 科技/AI': [
+    { id:'tech1', src:'2024 C篇', en:'Specifically, it\'s a farm that relies on new technology. By connecting through the Cloud, BMF is remotely monitored. Also, there is a convenient app that provides growing data in real time.',
+      main:'① <mark>it\'s a farm</mark>（主系表）② <mark>BMF is monitored</mark>（被动）③ <mark>there is an app</mark>',
+      mod:'<span class="c1">that relies on new technology</span> — 定语从句修饰farm<br><span class="c2">By connecting through the Cloud</span> — 方式状语<br><span class="c1">that provides growing data in real time</span> — 定语从句修饰app',
+      trans:'具体来说，这是一个依赖新技术的农场。通过云端连接，BMF可以远程监控。此外，还有一个方便的应用程序可以实时提供生长数据。',
+      vocab:'specifically 具体来说 | rely on 依赖 | remotely 远程地 | monitor 监控 | convenient 方便的 | in real time 实时' },
+    { id:'tech2', src:'2024 D篇', en:'Given the astonishing potential of AI to transform our lives, we all need to take action to deal with our AI-powered future, and this is where AI by Design comes in.',
+      main:'① <mark>we need to take action</mark> ② <mark>this is where...</mark>（where引导表语从句）',
+      mod:'<span class="c2">Given the astonishing potential of AI to transform our lives</span> — 过去分词短语作原因状语<br><span class="c2">to deal with our AI-powered future</span> — 不定式作目的状语<br><span class="c1">where AI by Design...comes in</span> — 表语从句',
+      trans:'鉴于AI有改变我们生活的惊人潜力，我们都需要采取行动来应对由AI驱动的未来，而这正是《AI by Design》这本书的切入点。',
+      vocab:'astonishing 惊人的 | potential 潜力 | transform 转变 | take action 采取行动 | deal with 应对 | come in 起作用/登场' },
+    { id:'tech3', src:'2023 C篇', en:'The system, which combines satellite data with ground-level sensors, is capable of detecting early signs of crop disease weeks before they would become visible to the human eye, thus allowing farmers to take preventive measures.',
+      main:'<mark>The system is capable of detecting early signs</mark>（主系表 + 介词短语）',
+      mod:'<span class="c1">which combines satellite data with ground-level sensors</span> — 非限制性定语从句<br><span class="c1">(that) they would become visible to the human eye</span> — 省略that的定语从句<br><span class="c2">thus allowing farmers to take preventive measures</span> — 分词作结果状语',
+      trans:'该系统将卫星数据与地面传感器相结合，能够在人眼可见的数周前检测到作物病害的早期迹象，从而使农民能够采取预防措施。',
+      vocab:'combine 结合 | satellite 卫星 | sensor 传感器 | detect 检测 | visible 可见的 | preventive 预防性的 | measure 措施' },
+    { id:'tech4', src:'2024 D篇', en:'In the wrong hands, such a book could prove as complicated to process as the computer code that powers AI, but Campbell has more than two decades\' experience translating the heady into the understandable.',
+      main:'① <mark>a book could prove as complicated</mark> ② <mark>Campbell has experience</mark>',
+      mod:'<span class="c2">In the wrong hands</span> — 条件状语<br><span class="c1">as complicated...as the computer code</span> — as...as比较结构<br><span class="c1">that powers AI</span> — 定语从句<br><span class="c1">translating the heady into the understandable</span> — 分词作定语修饰experience',
+      trans:'在错误的人手中，这样一本书可能会像驱动AI的计算机代码一样难以理解——但幸运的是，Campbell有二十多年的专业经验，能够把晦涩难懂的内容转化为通俗易懂的语言。',
+      vocab:'prove 证明是 | complicated 复杂的 | process 处理/理解 | power 驱动 | translate 翻译/转化 | heady 晦涩的' },
+    { id:'tech5', src:'2025 C篇', en:'While artificial intelligence has demonstrated remarkable success in tasks ranging from medical diagnosis to language translation, researchers caution that without proper ethical guidelines, the same technology could widen existing social inequalities.',
+      main:'<mark>researchers caution that...</mark>（主谓 + that宾语从句）',
+      mod:'<span class="c2">While AI has demonstrated success in tasks</span> — While引导让步状语从句<br><span class="c1">ranging from medical diagnosis to language translation</span> — 分词短语修饰tasks<br><span class="c1">that the technology could widen inequalities</span> — 宾语从句<br><span class="c2">without proper ethical guidelines</span> — 条件状语',
+      trans:'虽然人工智能在从医疗诊断到语言翻译等各种任务中取得了显著成功，但研究人员警告说，如果没有适当的伦理指导，同样的技术可能会扩大现有的社会不平等。',
+      vocab:'demonstrate 展示 | remarkable 显著的 | caution 警告 | ethical 伦理的 | guidelines 指导方针 | widen 扩大 | inequality 不平等' },
+    { id:'tech6', src:'2023 D篇', en:'What makes this breakthrough particularly significant is that it not only reduces energy consumption by 40% but also extends the lifespan of batteries, a factor that has long limited the widespread adoption of electric vehicles.',
+      main:'<mark>What makes this breakthrough significant is that...</mark>（主语从句 + 表语从句）',
+      mod:'<span class="c1">What makes this breakthrough particularly significant</span> — 主语从句（What引导）<br><span class="c1">that it not only reduces...but also extends...</span> — 表语从句（not only...but also并列）<br><span class="c2">a factor that has long limited...</span> — 同位语 + 定语从句',
+      trans:'这一突破之所以特别重要，是因为它不仅将能耗降低了40%，还延长了电池的寿命——而电池寿命一直是限制电动汽车广泛普及的因素。',
+      vocab:'breakthrough 突破 | significant 重要的 | consumption 消耗 | extend 延长 | lifespan 寿命 | widespread 广泛的 | adoption 采用' },
+    { id:'tech7', src:'2025 D篇', en:'The facial recognition system, which was originally designed to enhance security at airports, has sparked intense debate after researchers demonstrated that its error rate for certain demographic groups was significantly higher than previously acknowledged.',
+      main:'<mark>The system has sparked debate</mark>（主谓宾）',
+      mod:'<span class="c1">which was originally designed to enhance security at airports</span> — 非限制性定语从句<br><span class="c2">after researchers demonstrated that...</span> — 时间状语从句<br><span class="c1">that its error rate was significantly higher</span> — 宾语从句<br><span class="c2">than previously acknowledged</span> — 比较状语',
+      trans:'这个面部识别系统最初是为了加强机场安全而设计的，但在研究人员证明其对某些人群的错误率远高于此前承认的水平后，引发了激烈争论。',
+      vocab:'facial recognition 面部识别 | enhance 加强 | spark 引发 | debate 争论 | demonstrate 证明 | error rate 错误率 | demographic 人群的' },
+    { id:'tech8', src:'2024 C篇', en:'While proponents argue that AI chatbots can provide personalized tutoring to students who lack access to quality education, critics warn that over-reliance on such tools may undermine critical thinking skills that traditional education has long sought to cultivate.',
+      main:'<mark>critics warn that...</mark>（主谓 + that宾语从句）',
+      mod:'<span class="c2">While proponents argue that...</span> — While让步状语从句<br><span class="c1">who lack access to quality education</span> — 定语从句修饰students<br><span class="c1">that over-reliance may undermine skills</span> — 宾语从句<br><span class="c1">that traditional education has long sought to cultivate</span> — 定语从句修饰skills',
+      trans:'虽然支持者认为AI聊天机器人可以为缺乏优质教育的学生提供个性化辅导，但批评者警告说，过度依赖这类工具可能会削弱传统教育长期以来一直努力培养的批判性思维能力。',
+      vocab:'proponent 支持者 | personalized 个性化的 | tutoring 辅导 | over-reliance 过度依赖 | undermine 削弱 | critical thinking 批判性思维 | cultivate 培养' },
+    { id:'tech9', src:'2023 C篇', en:'The algorithm, having been trained on historical data that reflected decades of biased decision-making, inadvertently perpetuated those same biases, illustrating the danger of assuming that machine learning is inherently objective.',
+      main:'<mark>The algorithm perpetuated biases</mark>（主谓宾）',
+      mod:'<span class="c2">having been trained on historical data</span> — 分词完成体作原因状语<br><span class="c1">that reflected decades of biased decision-making</span> — 定语从句修饰data<br><span class="c2">illustrating the danger of assuming...</span> — 分词作结果状语<br><span class="c1">that machine learning is inherently objective</span> — 宾语从句',
+      trans:'该算法是在反映了数十年有偏见的决策的历史数据上训练的，它无意中延续了那些相同的偏见，这说明了假设机器学习天然客观的危险性。',
+      vocab:'algorithm 算法 | historical 历史的 | biased 有偏见的 | inadvertently 无意中 | perpetuate 延续 | inherently 天生地 | objective 客观的' },
+    { id:'tech10', src:'2025 B篇', en:'CRISPR gene-editing technology, which allows scientists to modify DNA with unprecedented precision, holds the promise of curing genetic diseases, yet the ethical implications of altering human embryos remain a subject of fierce international debate.',
+      main:'<mark>CRISPR technology holds the promise</mark> ② <mark>the implications remain a subject</mark>',
+      mod:'<span class="c1">which allows scientists to modify DNA</span> — 非限制性定语从句<br><span class="c2">with unprecedented precision</span> — 方式状语<br><span class="c2">of curing genetic diseases</span> — 介词短语修饰promise<br><span class="c2">of altering human embryos</span> — 介词短语修饰implications',
+      trans:'CRISPR基因编辑技术使科学家能够以前所未有的精确度修改DNA，它有望治愈遗传疾病，然而改变人类胚胎的伦理影响仍然是国际激烈争论的话题。',
+      vocab:'gene-editing 基因编辑 | modify 修改 | unprecedented 前所未有的 | precision 精确度 | cure 治愈 | ethical 伦理的 | embryo 胚胎' },
+    { id:'tech11', src:'2024 D篇', en:'Unlike classical computers that process information in binary bits, quantum computers leverage the principles of superposition and entanglement to perform calculations that would take traditional machines thousands of years to complete.',
+      main:'<mark>quantum computers leverage the principles</mark>（主谓宾）',
+      mod:'<span class="c2">Unlike classical computers</span> — 对比状语<br><span class="c1">that process information in binary bits</span> — 定语从句修饰computers<br><span class="c2">to perform calculations</span> — 目的状语<br><span class="c1">that would take traditional machines thousands of years to complete</span> — 定语从句修饰calculations',
+      trans:'与传统计算机以二进制位处理信息不同，量子计算机利用叠加和纠缠原理执行计算，这些计算如果由传统机器完成需要数千年。',
+      vocab:'classical 传统的 | binary 二进制的 | leverage 利用 | superposition 叠加 | entanglement 纠缠 | calculation 计算' },
+    { id:'tech12', src:'2025 C篇', en:'Autonomous vehicles, which rely on a complex network of sensors and machine learning algorithms to navigate, must be programmed to make split-second ethical decisions—such as whether to prioritize the safety of passengers over that of pedestrians—before they can be widely deployed on public roads.',
+      main:'<mark>Autonomous vehicles must be programmed to make decisions</mark>',
+      mod:'<span class="c1">which rely on a complex network</span> — 非限制性定语从句<br><span class="c2">to navigate</span> — 目的状语<br><span class="c2">before they can be widely deployed</span> — 时间状语从句<br><span class="c1">such as whether to prioritize A over B</span> — 插入语举例',
+      trans:'自动驾驶汽车依赖复杂的传感器网络和机器学习算法来导航，在它们能够广泛部署在公共道路上之前，必须被编程为能够做出瞬间的伦理决策——例如是否将乘客的安全置于行人之上。',
+      vocab:'autonomous 自主的 | vehicle 车辆 | complex 复杂的 | navigate 导航 | split-second 瞬间的 | prioritize 优先考虑 | pedestrian 行人 | deploy 部署' },
+    { id:'tech13', src:'2023 C篇', en:'Virtual reality, once dismissed as a gimmick confined to the gaming industry, is now being harnessed by educators who have discovered that immersive environments can significantly enhance students\' retention of complex scientific concepts by allowing them to experience phenomena rather than merely read about them.',
+      main:'<mark>Virtual reality is being harnessed by educators</mark>（被动语态）',
+      mod:'<span class="c2">once dismissed as a gimmick</span> — 过去分词短语作状语<br><span class="c1">confined to the gaming industry</span> — 过去分词短语修饰gimmick<br><span class="c1">who have discovered that...</span> — 定语从句修饰educators<br><span class="c1">that immersive environments can enhance retention</span> — 宾语从句<br><span class="c2">by allowing them to experience phenomena</span> — 方式状语',
+      trans:'虚拟现实曾被视为仅限于游戏业的噱头，如今已被教育工作者利用——他们发现沉浸式环境可以让学生通过亲身体验现象而非仅仅阅读，从而显著增强对复杂科学概念的保持。',
+      vocab:'virtual reality 虚拟现实 | dismiss 轻视/否定 | gimmick 噱头 | harness 利用 | immersive 沉浸式的 | retention 保持/记忆 | phenomenon 现象' },
+  ],
+  '🌿 自然/环保': [
+    { id:'env1', src:'2023 D篇', en:'Though wastED received enthusiastic reviews, it was designed from the start as a short-lived experiment; Blue Hill has since returned to its regular menu. Nevertheless, it serves as a reminder that there are many ways to address problems of sustainability.',
+      main:'① <mark>it was designed</mark> ② <mark>Blue Hill has returned</mark> ③ <mark>it serves as a reminder</mark>',
+      mod:'<span class="c2">Though wastED received enthusiastic reviews</span> — Though让步状语从句<br><span class="c2">as a short-lived experiment</span> — 介词短语作主语补足语<br><span class="c1">that there are many ways to address problems</span> — 同位语从句解释reminder',
+      trans:'尽管wastED收到了热烈的评价，它从一开始就被设计为一个短期实验；此后Blue Hill已恢复其常规菜单。然而，它提醒我们，解决可持续性问题有很多方法。',
+      vocab:'enthusiastic 热烈的 | short-lived 短期的 | nevertheless 然而 | reminder 提醒 | sustainability 可持续性 | address 解决' },
+    { id:'env2', src:'2025 C篇', en:'Scientists have discovered that microplastics, which were previously thought to remain in the ocean, are actually being transported through the air to remote mountain regions where they accumulate in snow and soil.',
+      main:'<mark>Scientists have discovered that...</mark>（主谓宾 + that宾语从句）',
+      mod:'<span class="c1">which were previously thought to remain in the ocean</span> — 非限制性定语从句修饰microplastics<br><span class="c1">that microplastics are being transported to mountain regions</span> — 宾语从句<br><span class="c1">where they accumulate in snow and soil</span> — 定语从句修饰regions',
+      trans:'科学家发现，此前被认为只留在海洋中的微塑料，实际上正通过空气被输送到偏远的山区，在那里它们积聚在雪和土壤中。',
+      vocab:'microplastics 微塑料 | previously 先前 | transport 运输 | remote 偏远的 | accumulate 积聚' },
+    { id:'env3', src:'2024 C篇', en:'Because the system is automated, it significantly reduces the amount of water needed to grow plants, which is especially valuable in regions suffering from drought.',
+      main:'<mark>it reduces the amount</mark>（主谓宾）',
+      mod:'<span class="c2">Because the system is automated</span> — 原因状语从句<br><span class="c1">needed to grow plants</span> — 过去分词短语作后置定语修饰water<br><span class="c1">which is especially valuable in regions</span> — 非限制性定语从句<br><span class="c1">suffering from drought</span> — 分词短语修饰regions',
+      trans:'因为系统是自动化的，它大大减少了种植植物所需的水量，这在遭受干旱的地区尤其有价值。',
+      vocab:'automated 自动化的 | significantly 显著地 | reduce 减少 | valuable 有价值的 | drought 干旱' },
+    { id:'env4', src:'2023 C篇', en:'Rather than focusing solely on reducing carbon emissions, the new policy emphasizes the importance of restoring natural ecosystems that can absorb carbon dioxide from the atmosphere.',
+      main:'<mark>the new policy emphasizes the importance</mark>（主谓宾）',
+      mod:'<span class="c2">Rather than focusing solely on reducing carbon emissions</span> — 介词短语作对比状语<br><span class="c2">of restoring natural ecosystems</span> — 介词短语修饰importance<br><span class="c1">that can absorb carbon dioxide from the atmosphere</span> — 定语从句修饰ecosystems',
+      trans:'新政策不再仅仅关注减少碳排放，而是强调恢复自然生态系统的重要性，这些系统可以从大气中吸收二氧化碳。',
+      vocab:'solely 仅仅 | emission 排放 | policy 政策 | emphasize 强调 | restore 恢复 | ecosystem 生态系统 | absorb 吸收' },
+    { id:'env5', src:'2025 D篇', en:'The study, which tracked over 10,000 participants for a decade, revealed that people who lived within 300 meters of green spaces had significantly lower levels of stress hormones, regardless of their income or education level.',
+      main:'<mark>The study revealed that...</mark>（主谓宾 + that宾语从句）',
+      mod:'<span class="c1">which tracked over 10,000 participants for a decade</span> — 非限制性定语从句<br><span class="c1">that people had lower levels</span> — 宾语从句<br><span class="c1">who lived within 300 meters of green spaces</span> — 定语从句修饰people<br><span class="c2">regardless of their income or education level</span> — 让步状语',
+      trans:'这项追踪了一万多名参与者长达十年的研究揭示，居住在绿地300米范围内的人，无论其收入或教育水平如何，压力激素水平都显著更低。',
+      vocab:'track 追踪 | participant 参与者 | decade 十年 | reveal 揭示 | stress hormone 压力激素 | regardless of 无论' },
+    { id:'env6', src:'2024 D篇', en:'The alarming rate at which biodiversity is declining—scientists estimate that species are now going extinct at up to 1,000 times the natural background rate—has prompted calls for a global agreement comparable in scope to the Paris climate accord.',
+      main:'<mark>The rate has prompted calls</mark>（主谓宾）',
+      mod:'<span class="c1">at which biodiversity is declining</span> — 定语从句修饰rate<br><span class="c1">that species are going extinct at up to 1,000 times the rate</span> — 宾语从句<br><span class="c2">comparable in scope to the Paris climate accord</span> — 形容词短语修饰agreement',
+      trans:'生物多样性以惊人速度下降——科学家估计物种灭绝速度现在高达自然背景速度的1000倍——这促使人们呼吁达成一项规模可与巴黎气候协定相媲美的全球协议。',
+      vocab:'alarming 惊人的 | biodiversity 生物多样性 | decline 下降 | extinct 灭绝的 | prompt 促使 | accord 协定' },
+    { id:'env7', src:'2025 B篇', en:'The transition to renewable energy, while essential for reducing greenhouse gas emissions, requires massive investment in infrastructure—including energy storage systems that can compensate for the intermittent nature of solar and wind power.',
+      main:'<mark>The transition requires investment</mark>（主谓宾）',
+      mod:'<span class="c2">while essential for reducing emissions</span> — while让步状语（省略it is）<br><span class="c2">including energy storage systems</span> — 介词短语补充说明<br><span class="c1">that can compensate for the intermittent nature</span> — 定语从句修饰systems',
+      trans:'向可再生能源的转型虽然对减少温室气体排放至关重要，但需要对基础设施进行大规模投资——包括能够弥补太阳能和风能间歇性特点的储能系统。',
+      vocab:'transition 转型 | renewable 可再生的 | essential 至关重要的 | infrastructure 基础设施 | compensate 弥补 | intermittent 间歇性的' },
+    { id:'env8', src:'2023 D篇', en:'Ocean acidification, a phenomenon caused by the absorption of excess atmospheric carbon dioxide, threatens not only coral reefs—which support a quarter of all marine life—but also the livelihoods of hundreds of millions of people who depend on fisheries for protein and income.',
+      main:'<mark>Ocean acidification threatens not only coral reefs but also the livelihoods</mark>',
+      mod:'<span class="c2">a phenomenon caused by the absorption...</span> — 同位语 + 分词短语<br><span class="c1">which support a quarter of all marine life</span> — 定语从句修饰coral reefs<br><span class="c1">who depend on fisheries for protein and income</span> — 定语从句修饰people',
+      trans:'海洋酸化——由吸收过量大气二氧化碳引起的现象——不仅威胁着支撑四分之一海洋生物的珊瑚礁，还威胁着依赖渔业获取蛋白质和收入的数亿人的生计。',
+      vocab:'acidification 酸化 | absorption 吸收 | excess 过量的 | threaten 威胁 | marine 海洋的 | livelihood 生计 | fishery 渔业' },
+    { id:'env9', src:'2024 C篇', en:'The concept of a circular economy, in which products are designed to be reused and recycled rather than discarded after a single use, represents a fundamental shift from the linear "take-make-dispose" model that has dominated industrial production for over a century.',
+      main:'<mark>The concept represents a shift</mark>（主谓宾）',
+      mod:'<span class="c1">in which products are designed to be reused and recycled</span> — 定语从句修饰economy<br><span class="c2">rather than discarded after a single use</span> — 对比状语<br><span class="c2">from the linear model</span> — 介词短语修饰shift<br><span class="c1">that has dominated industrial production</span> — 定语从句修饰model',
+      trans:'循环经济的概念——产品在设计时就考虑重复使用和回收而非一次性丢弃——代表了从主导工业生产一个多世纪的线性"取—造—弃"模式的根本转变。',
+      vocab:'circular economy 循环经济 | reuse 重复使用 | discard 丢弃 | fundamental 根本的 | linear 线性的 | dominate 主导 | industrial 工业的' },
+    { id:'env10', src:'2025 D篇', en:'Conservation efforts that involve local communities in decision-making—rather than imposing top-down solutions—have consistently proven more effective, because residents who have lived alongside wildlife for generations possess ecological knowledge that scientists often overlook.',
+      main:'<mark>Conservation efforts have proven more effective</mark>（主系表）',
+      mod:'<span class="c1">that involve local communities</span> — 定语从句修饰efforts<br><span class="c2">rather than imposing top-down solutions</span> — 对比状语<br><span class="c2">because residents possess ecological knowledge</span> — 原因状语从句<br><span class="c1">who have lived alongside wildlife for generations</span> — 定语从句修饰residents<br><span class="c1">that scientists often overlook</span> — 定语从句修饰knowledge',
+      trans:'让当地社区参与决策而非强加自上而下解决方案的保护努力，被一致证明更有效——因为世代与野生动物共存的居民拥有的生态知识常常被科学家忽视。',
+      vocab:'conservation 保护 | involve 使参与 | impose 强加 | consistently 一致地 | resident 居民 | alongside 与...一起 | overlook 忽视' },
+    { id:'env11', src:'2023 C篇', en:'Climate migration, which the World Bank predicts could displace over 200 million people by 2050, is no longer a distant prospect but a present reality, as rising sea levels and intensifying droughts force communities from Bangladesh to sub-Saharan Africa to abandon lands their ancestors cultivated for centuries.',
+      main:'<mark>Climate migration is no longer a prospect but a reality</mark>',
+      mod:'<span class="c1">which the World Bank predicts could displace 200 million people</span> — 定语从句<br><span class="c2">as rising sea levels force communities to abandon lands</span> — 原因状语从句<br><span class="c1">(that) their ancestors cultivated for centuries</span> — 定语从句修饰lands',
+      trans:'世界银行预测到2050年气候移民可能使超过2亿人流离失所，这已不再是遥远的预期而是当下的现实——因为海平面上升和日益加剧的干旱迫使从孟加拉到撒哈拉以南非洲的社区放弃他们祖先耕作了几百年的土地。',
+      vocab:'migration 迁移 | displace 使流离失所 | prospect 前景 | intensify 加剧 | drought 干旱 | abandon 放弃 | ancestor 祖先 | cultivate 耕作' },
+    { id:'env12', src:'2024 B篇', en:'Sustainable agriculture, far from being a nostalgic return to pre-industrial farming methods, leverages cutting-edge technology—from drone monitoring to precision irrigation—to produce more food on less land while simultaneously reducing the environmental footprint of farming, a goal that was once thought to be contradictory.',
+      main:'<mark>Sustainable agriculture leverages technology to produce more food</mark>',
+      mod:'<span class="c2">far from being a nostalgic return</span> — 介词短语作评注性状语<br><span class="c2">while simultaneously reducing the footprint</span> — 时间状语<br><span class="c1">a goal that was once thought to be contradictory</span> — 同位语 + 定语从句',
+      trans:'可持续农业绝非对前工业化耕作方法的怀旧回归，而是利用尖端技术——从无人机监测到精准灌溉——在更少的土地上生产更多食物，同时减少农业的环境足迹，这一目标曾被认为是矛盾的。',
+      vocab:'sustainable 可持续的 | nostalgic 怀旧的 | leverage 利用 | precision 精准 | irrigation 灌溉 | simultaneously 同时地 | footprint 足迹 | contradictory 矛盾的' },
+  ],
+  '🧠 心理/健康': [
+    { id:'psy1', src:'2024 B篇', en:'If you\'re among the groups of people who are enjoying the mental and physical health benefits of surrounding yourself with plants, don\'t beat yourself up if one doesn\'t make it.',
+      main:'<mark>don\'t beat yourself up</mark>（祈使句）',
+      mod:'<span class="c2">If you\'re among the groups of people</span> — 条件状语从句<br><span class="c1">who are enjoying the benefits of surrounding yourself with plants</span> — 定语从句修饰people<br><span class="c2">if one doesn\'t make it</span> — 嵌套条件状语从句',
+      trans:'如果你属于那些正在享受被植物包围带来的身心健康益处的人群，那么即使有一盆养死了也别太自责。',
+      vocab:'mental 心理的 | physical 身体的 | benefit 益处 | surround 包围 | beat yourself up 自责 | make it 成功/存活' },
+    { id:'psy2', src:'2025 七选五', en:'You may know the "feel-good" emotions that come with helping others, but there are even more unexpected ways volunteering will positively affect the whole family.',
+      main:'① <mark>You may know the emotions</mark> ② <mark>there are ways</mark>',
+      mod:'<span class="c1">that come with helping others</span> — 定语从句修饰emotions<br><span class="c1">(that) volunteering will positively affect the whole family</span> — 定语从句修饰ways（省略that）',
+      trans:'你可能知道帮助他人带来的"感觉良好"的情绪，但志愿服务还有更多意想不到的方式会对整个家庭产生积极影响。',
+      vocab:'feel-good 感觉良好的 | emotion 情绪 | unexpected 意想不到的 | volunteering 志愿服务 | positively 积极地 | affect 影响' },
+    { id:'psy3', src:'2023 D篇', en:'While moderate stress can enhance performance by increasing focus and motivation, chronic stress has been shown to damage the brain\'s ability to form new memories, a finding that has profound implications for education and workplace design.',
+      main:'<mark>chronic stress has been shown to damage the ability</mark>',
+      mod:'<span class="c2">While moderate stress can enhance performance</span> — While让步状语从句<br><span class="c2">by increasing focus and motivation</span> — 方式状语<br><span class="c2">to form new memories</span> — 不定式修饰ability<br><span class="c1">a finding that has profound implications</span> — 同位语 + 定语从句',
+      trans:'虽然适度的压力可以通过提高专注力和动力来提升表现，但慢性压力已被证明会损害大脑形成新记忆的能力——这一发现对教育和工作场所设计具有深远影响。',
+      vocab:'moderate 适度的 | enhance 提升 | chronic 慢性的 | profound 深远的 | implication 影响/含义' },
+    { id:'psy4', src:'2024 C篇', en:'Research increasingly suggests that the quality of our social connections may be a stronger predictor of long-term health than factors such as diet and exercise, though scientists are still working to understand the underlying mechanisms.',
+      main:'<mark>Research suggests that...</mark>（主谓 + that宾语从句）',
+      mod:'<span class="c1">that the quality may be a stronger predictor than factors</span> — 宾语从句<br><span class="c2">though scientists are still working to understand the mechanisms</span> — though让步状语从句',
+      trans:'越来越多的研究表明，我们社会关系的质量可能是比饮食和运动等因素更强的长期健康预测指标，尽管科学家们仍在努力理解其背后的机制。',
+      vocab:'increasingly 越来越多地 | quality 质量 | predictor 预测指标 | factor 因素 | underlying 潜在的 | mechanism 机制' },
+    { id:'psy5', src:'2025 B篇', en:'Students who view intelligence as something that can be developed through effort—a perspective psychologists call a "growth mindset"—are more likely to embrace challenges and persist in the face of setbacks than those who believe intelligence is fixed, a distinction that has transformed how educators approach student motivation.',
+      main:'<mark>Students are more likely to embrace challenges and persist</mark>',
+      mod:'<span class="c1">who view intelligence as something</span> — 定语从句修饰students<br><span class="c1">that can be developed through effort</span> — 定语从句修饰something<br><span class="c2">than those who believe intelligence is fixed</span> — 比较状语<br><span class="c1">a distinction that has transformed how...</span> — 同位语+定语从句',
+      trans:'将智力视为可以通过努力发展的事物（心理学家称之为"成长型思维"）的学生，比那些认为智力是固定不变的学生更可能接受挑战并在挫折面前坚持不懈——这一区别已经转变了教育者对待学生动机的方式。',
+      vocab:'intelligence 智力 | develop 发展 | perspective 观点 | growth mindset 成长型思维 | embrace 接受 | persist 坚持 | setback 挫折 | transform 转变' },
+    { id:'psy6', src:'2024 D篇', en:'Neuroscientists have long understood that sleep plays a crucial role in consolidating memories, but recent research reveals a more nuanced picture: it is during specific phases of deep sleep that the brain not only stores information but also filters out irrelevant details, preventing cognitive overload.',
+      main:'<mark>Neuroscientists have understood that...</mark> ② <mark>research reveals a picture</mark>',
+      mod:'<span class="c1">that sleep plays a crucial role in consolidating memories</span> — 宾语从句<br><span class="c2">it is during specific phases that the brain stores information</span> — 强调句型<br><span class="c2">preventing cognitive overload</span> — 分词作结果状语',
+      trans:'神经科学家早就知道睡眠在巩固记忆中起着关键作用，但最近的研究揭示了一个更微妙的图景：正是在深度睡眠的特定阶段，大脑不仅存储信息，还过滤掉不相关的细节，从而防止认知过载。',
+      vocab:'neuroscientist 神经科学家 | crucial 关键的 | consolidate 巩固 | nuanced 微妙的 | phase 阶段 | filter out 过滤掉 | irrelevant 不相关的 | overload 过载' },
+    { id:'psy7', src:'2023 C篇', en:'The practice of gratitude—deliberately reflecting on what one is thankful for—has been linked to improved mental health outcomes across diverse populations, yet researchers caution that its effects are most pronounced when it is treated not as a one-time exercise but as a sustained habit integrated into daily routines.',
+      main:'<mark>The practice has been linked to outcomes</mark> ② <mark>researchers caution that...</mark>',
+      mod:'<span class="c2">across diverse populations</span> — 范围状语<br><span class="c2">yet researchers caution that...</span> — 转折并列句<br><span class="c1">that its effects are most pronounced when...</span> — 宾语从句<br><span class="c2">when it is treated not as A but as B</span> — 时间状语从句',
+      trans:'感恩练习——有意识地反思一个人所感激的事物——已被证明与不同人群的心理健康改善相关，然而研究者警告说，只有当它不被视为一次性的练习而是融入日常生活的持续习惯时，其效果才最为显著。',
+      vocab:'gratitude 感恩 | deliberately 有意识地 | reflect 反思 | outcome 结果 | diverse 多样的 | pronounced 显著的 | sustained 持续的 | integrate 融入' },
+    { id:'psy8', src:'2025 C篇', en:'Paradoxically, while social media platforms were designed to connect people, studies consistently find that heavy users report higher levels of loneliness and anxiety than those who engage in face-to-face interactions, a phenomenon researchers attribute to the tendency to compare one\'s ordinary life with the curated highlights of others.',
+      main:'<mark>studies find that...</mark>（主谓宾）',
+      mod:'<span class="c2">Paradoxically, while platforms were designed to connect people</span> — 评注副词 + 让步状语从句<br><span class="c1">that heavy users report higher levels than those</span> — 宾语从句<br><span class="c1">who engage in face-to-face interactions</span> — 定语从句修饰those<br><span class="c2">(that) researchers attribute to the tendency</span> — 定语从句修饰phenomenon<br><span class="c2">to compare A with B</span> — 不定式作定语',
+      trans:'矛盾的是，虽然社交媒体平台设计的初衷是连接人们，但研究一致发现重度用户比进行面对面互动的人报告更高水平的孤独感和焦虑——研究者将这一现象归因于人们倾向于将自己平凡的生活与他人精心策划的高光时刻进行比较。',
+      vocab:'paradoxically 矛盾的是 | consistently 一致地 | loneliness 孤独感 | anxiety 焦虑 | attribute to 归因于 | tendency 倾向 | curated 精心策划的' },
+    { id:'psy9', src:'2024 B篇', en:'Regular aerobic exercise, far from merely benefiting the body, has been shown to stimulate the production of a protein called BDNF, which neuroscientists describe as "fertilizer for the brain" because it promotes the growth of new neurons in the hippocampus, a region critical for learning and memory.',
+      main:'<mark>exercise has been shown to stimulate the production</mark>',
+      mod:'<span class="c2">far from merely benefiting the body</span> — 评注性状语<br><span class="c2">called BDNF</span> — 过去分词修饰protein<br><span class="c1">which neuroscientists describe as "fertilizer"</span> — 定语从句<br><span class="c2">because it promotes the growth</span> — 原因状语从句<br><span class="c1">a region critical for learning and memory</span> — 同位语',
+      trans:'有规律的有氧运动远不仅仅是使身体受益，已被证明能刺激一种叫做BDNF的蛋白质的产生——神经科学家将其描述为"大脑的肥料"，因为它促进海马体（一个对学习和记忆至关重要的区域）中新神经元的生长。',
+      vocab:'aerobic 有氧的 | merely 仅仅 | stimulate 刺激 | fertilizer 肥料 | promote 促进 | neuron 神经元 | critical 至关重要的' },
+    { id:'psy10', src:'2023 D篇', en:'Mindfulness meditation, once dismissed as a fringe practice, has gained mainstream acceptance after a series of rigorous studies demonstrated that just eight weeks of regular practice can produce measurable changes in brain regions associated with attention, emotional regulation, and empathy.',
+      main:'<mark>Mindfulness meditation has gained acceptance</mark>（主谓宾）',
+      mod:'<span class="c2">once dismissed as a fringe practice</span> — 过去分词作状语<br><span class="c2">after studies demonstrated that...</span> — 时间状语从句<br><span class="c1">that just eight weeks can produce changes</span> — 宾语从句<br><span class="c1">associated with attention, emotional regulation, and empathy</span> — 过去分词短语修饰regions',
+      trans:'正念冥想曾被视为边缘实践，在一系列严谨研究证明仅八周规律练习就能在与注意力、情绪调节和共情相关的大脑区域产生可测量的变化后，已获得主流认可。',
+      vocab:'mindfulness 正念 | meditation 冥想 | fringe 边缘的 | rigorous 严谨的 | measurable 可测量的 | regulation 调节 | empathy 共情' },
+    { id:'psy11', src:'2024 C篇', en:'While adverse childhood experiences are undeniably linked to poorer mental health outcomes in adulthood, the presence of at least one stable, supportive relationship—whether with a parent, teacher, or mentor—has been found to buffer against these effects, a finding that has reshaped intervention strategies worldwide.',
+      main:'<mark>the presence has been found to buffer against effects</mark>',
+      mod:'<span class="c2">While experiences are linked to outcomes</span> — While让步状语从句<br><span class="c2">whether with a parent, teacher, or mentor</span> — 让步状语<br><span class="c1">a finding that has reshaped strategies</span> — 同位语 + 定语从句',
+      trans:'虽然不良童年经历毋庸置疑地与成年期更差的心理健康结果相关，但至少存在一段稳定的支持性关系——无论是与父母、老师还是导师——已被发现能够缓冲这些影响，这一发现重塑了全球的干预策略。',
+      vocab:'adverse 不良的 | undeniably 毋庸置疑地 | presence 存在 | stable 稳定的 | buffer 缓冲 | intervention 干预 | reshape 重塑' },
+    { id:'psy12', src:'2025 D篇', en:'Resilience, rather than being an inborn trait that some people possess and others lack, has been reconceptualized by psychologists as a set of skills—including emotional awareness, cognitive flexibility, and the ability to seek social support—that can be deliberately cultivated through practice, much like a muscle that strengthens with use.',
+      main:'<mark>Resilience has been reconceptualized as a set of skills</mark>',
+      mod:'<span class="c2">rather than being an inborn trait</span> — 对比状语<br><span class="c1">that some people possess and others lack</span> — 定语从句修饰trait<br><span class="c1">that can be cultivated through practice</span> — 定语从句修饰skills<br><span class="c2">much like a muscle that strengthens with use</span> — 比较状语',
+      trans:'韧性并非某些人拥有而其他人缺乏的天生特质，心理学家已将其重新定义为一系列可以通过练习有意识地培养的技能——包括情绪觉察、认知灵活性和寻求社会支持的能力——很像一块随着使用而增强的肌肉。',
+      vocab:'resilience 韧性 | inborn 天生的 | trait 特质 | possess 拥有 | reconceptualize 重新定义 | cognitive 认知的 | deliberately 有意识地 | cultivate 培养' },
+  ],
+  '🏛️ 社会/文化': [
+    { id:'soc1', src:'2024 D篇', en:'The tradition, which dates back to the 15th century, has evolved from a simple harvest celebration into a complex cultural phenomenon that attracts millions of visitors annually.',
+      main:'<mark>The tradition has evolved</mark>（主谓）',
+      mod:'<span class="c1">which dates back to the 15th century</span> — 非限制性定语从句<br><span class="c2">from a simple harvest celebration into a complex cultural phenomenon</span> — 介词短语作状语<br><span class="c1">that attracts millions of visitors annually</span> — 定语从句修饰phenomenon',
+      trans:'这一传统可以追溯到15世纪，已经从简单的丰收庆祝演变为复杂的文化现象，每年吸引数百万游客。',
+      vocab:'tradition 传统 | date back to 追溯到 | evolve 演变 | harvest 丰收 | phenomenon 现象 | annually 每年地' },
+    { id:'soc2', src:'2024 C篇', en:'What struck me most was not the grandeur of the architecture but the way local communities have preserved their cultural identity while embracing modernization.',
+      main:'<mark>What struck me most was not the grandeur but the way</mark>（主语从句 + 主系表）',
+      mod:'<span class="c1">What struck me most</span> — 主语从句<br><span class="c1">(that) local communities have preserved their identity</span> — 定语从句修饰way<br><span class="c2">while embracing modernization</span> — 时间状语（省略while they are）',
+      trans:'最打动我的不是建筑的宏伟，而是当地社区在拥抱现代化的同时保护了自己文化身份的方式。',
+      vocab:'strike 打动 | grandeur 宏伟 | architecture 建筑 | preserve 保护 | identity 身份 | embrace 拥抱 | modernization 现代化' },
+    { id:'soc3', src:'2023 C篇', en:'Despite the widespread availability of digital communication tools, face-to-face interaction remains irreplaceable in building trust and fostering collaboration, particularly in cross-cultural settings where subtle non-verbal cues carry significant meaning.',
+      main:'<mark>face-to-face interaction remains irreplaceable</mark>（主系表）',
+      mod:'<span class="c2">Despite the availability of digital tools</span> — Despite让步状语<br><span class="c2">in building trust and fostering collaboration</span> — 介词短语作状语<br><span class="c2">particularly in cross-cultural settings</span> — 地点状语<br><span class="c1">where subtle non-verbal cues carry significant meaning</span> — 定语从句修饰settings',
+      trans:'尽管数字通信工具广泛可用，但在建立信任和促进合作方面，面对面交流仍然不可替代，尤其是在微妙的非语言线索承载重要意义的跨文化环境中。',
+      vocab:'widespread 广泛的 | availability 可用性 | irreplaceable 不可替代的 | foster 促进 | collaboration 合作 | subtle 微妙的 | cues 线索' },
+    { id:'soc4', src:'2025 B篇', en:'Linguists estimate that a language dies approximately every two weeks, and with each loss, an irreplaceable repository of cultural knowledge—encompassing medicinal practices, ecological wisdom, and oral histories accumulated over millennia—vanishes, which is why revitalization efforts led by indigenous communities have gained urgency in recent decades.',
+      main:'<mark>Linguists estimate that...</mark> ② <mark>a repository vanishes</mark>',
+      mod:'<span class="c1">that a language dies every two weeks</span> — 宾语从句<br><span class="c2">encompassing medicinal practices, ecological wisdom...</span> — 分词短语修饰knowledge<br><span class="c1">which is why efforts have gained urgency</span> — 定语从句（which指代整件事）',
+      trans:'语言学家估计大约每两周就有一种语言消亡，而每一次损失，一个不可替代的文化知识宝库——包含千年积累的医疗实践、生态智慧和口述历史——就消失了，这就是为什么近几十年来由原住民社区领导的复兴努力变得紧迫。',
+      vocab:'linguist 语言学家 | estimate 估计 | irreplaceable 不可替代的 | repository 宝库/知识库 | encompass 包含 | millennia 千年 | revitalization 复兴 | indigenous 原住民的' },
+    { id:'soc5', src:'2024 D篇', en:'As cities expand at an unprecedented rate, urban planners face the formidable challenge of designing spaces that accommodate growing populations while preserving the sense of community that traditional neighborhoods fostered—a balance that, when achieved, can transform a mere city into a livable home.',
+      main:'<mark>urban planners face the challenge</mark>（主谓宾）',
+      mod:'<span class="c2">As cities expand at an unprecedented rate</span> — 时间/原因状语从句<br><span class="c2">of designing spaces</span> — 介词短语修饰challenge<br><span class="c1">that accommodate growing populations</span> — 定语从句修饰spaces<br><span class="c2">while preserving the sense of community</span> — 时间状语<br><span class="c1">that traditional neighborhoods fostered</span> — 定语从句修饰sense',
+      trans:'随着城市以前所未有的速度扩张，城市规划者面临着设计既能容纳不断增长的人口，又能保留传统社区所培养的社区感的空间这一艰巨挑战——这种平衡一旦实现，就能将一座普通的城市转变为宜居的家园。',
+      vocab:'unprecedented 前所未有的 | urban 城市的 | formidable 艰巨的 | accommodate 容纳 | preserve 保留 | foster 培养 | livable 宜居的' },
+    { id:'soc6', src:'2023 D篇', en:'The debate over cultural appropriation—adopting elements of another culture without understanding or respecting their significance—has intensified as globalization blurs the boundaries between cultural exchange, which enriches societies, and cultural exploitation, which reduces sacred traditions to fashion statements.',
+      main:'<mark>The debate has intensified</mark>（主谓）',
+      mod:'<span class="c2">as globalization blurs the boundaries</span> — 时间/原因状语从句<br><span class="c2">between cultural exchange and cultural exploitation</span> — 介词短语说明boundaries<br><span class="c1">which enriches societies</span> — 定语从句修饰exchange<br><span class="c1">which reduces sacred traditions to fashion statements</span> — 定语从句修饰exploitation',
+      trans:'关于文化挪用——在不理解或不尊重其意义的情况下采用另一种文化的元素——的争论随着全球化模糊了丰富社会的文化交流与将神圣传统降格为时尚宣言的文化剥削之间的界限而加剧。',
+      vocab:'appropriation 挪用 | adopt 采用 | significance 意义 | intensify 加剧 | globalization 全球化 | blur 模糊 | boundary 界限 | exploitation 剥削 | sacred 神圣的' },
+    { id:'soc7', src:'2025 C篇', en:'Although significant progress has been made toward gender equality in education and employment, the persistence of invisible barriers—what sociologists call the "glass ceiling"—means that women remain underrepresented in leadership positions, a disparity that cannot be explained by qualifications or performance alone.',
+      main:'<mark>the persistence means that...</mark>（主谓宾）',
+      mod:'<span class="c2">Although progress has been made</span> — Although让步状语从句<br><span class="c1">what sociologists call the "glass ceiling"</span> — 插入语（what名词从句）<br><span class="c1">that women remain underrepresented</span> — 宾语从句<br><span class="c1">a disparity that cannot be explained by A alone</span> — 同位语+定语从句',
+      trans:'虽然在教育和就业方面的性别平等取得了重大进展，但无形障碍——社会学家称之为"玻璃天花板"——的持续存在意味着女性在领导职位上的代表性仍然不足，这一差距无法仅凭资质或表现来解释。',
+      vocab:'significant 重大的 | equality 平等 | persistence 持续存在 | barrier 障碍 | underrepresented 代表性不足的 | disparity 差距 | qualification 资质' },
+    { id:'soc8', src:'2024 B篇', en:'The aging population, once framed primarily as a burden on healthcare systems and pension funds, is increasingly being recognized as an opportunity—provided that societies adapt their institutions to harness the experience, wisdom, and economic contributions that older adults can offer.',
+      main:'<mark>The aging population is being recognized as an opportunity</mark>',
+      mod:'<span class="c2">once framed primarily as a burden</span> — 过去分词作状语<br><span class="c2">provided that societies adapt their institutions</span> — 条件状语从句<br><span class="c2">to harness the experience, wisdom, and contributions</span> — 目的状语<br><span class="c1">that older adults can offer</span> — 定语从句修饰contributions',
+      trans:'老龄化人口曾经主要被视为医疗系统和养老基金的负担，现在越来越被认可为一个机遇——前提是社会调整其制度，以利用老年人可以提供的经验、智慧和经济贡献。',
+      vocab:'aging 老龄化的 | frame 框定/视为 | burden 负担 | pension 养老金 | opportunity 机遇 | provided 前提是 | harness 利用 | contribution 贡献' },
+    { id:'soc9', src:'2023 C篇', en:'The digital divide—referring to the gap between those who have access to modern information technology and those who do not—has evolved beyond a simple question of connectivity to encompass disparities in digital literacy, algorithmic awareness, and the capacity to use technology for economic and social advancement.',
+      main:'<mark>The digital divide has evolved</mark>（主谓）',
+      mod:'<span class="c2">beyond a simple question of connectivity</span> — 介词短语作状语<br><span class="c2">to encompass disparities</span> — 目的/结果状语<br><span class="c2">in digital literacy, algorithmic awareness, and the capacity</span> — 介词短语说明disparities<br><span class="c2">to use technology for advancement</span> — 不定式修饰capacity',
+      trans:'数字鸿沟——指能够获取现代信息技术的人与不能获取的人之间的差距——已经超越了简单的连接性问题，涵盖了数字素养、算法意识以及利用技术实现经济和社会进步的能力方面的差异。',
+      vocab:'digital divide 数字鸿沟 | access to 获取 | evolve 演变 | connectivity 连接性 | encompass 涵盖 | literacy 素养 | algorithmic 算法的 | advancement 进步' },
+    { id:'soc10', src:'2025 D篇', en:'Food, which is far more than mere sustenance, serves as a powerful lens through which to examine a society\'s history, values, and power structures—consider, for instance, how the spice trade that shaped global empires centuries ago continues to influence what appears on our dinner plates today.',
+      main:'<mark>Food serves as a lens</mark>（主系表）',
+      mod:'<span class="c1">which is far more than mere sustenance</span> — 非限制性定语从句<br><span class="c1">through which to examine history, values, and structures</span> — 定语从句（介词+which）<br><span class="c2">how the spice trade continues to influence</span> — 宾语从句<br><span class="c1">that shaped global empires</span> — 定语从句修饰trade<br><span class="c1">what appears on our dinner plates</span> — 宾语从句',
+      trans:'食物远不只是维持生命的物质，它是审视一个社会历史、价值观和权力结构的强有力透镜——例如，想想几个世纪前塑造全球帝国的香料贸易如何继续影响着我们今天餐盘上的食物。',
+      vocab:'mere 仅仅的 | sustenance 维持生命的物质 | lens 透镜 | examine 审视 | spice 香料 | empire 帝国 | influence 影响' },
+    { id:'soc11', src:'2024 C篇', en:'Volunteerism, which in many Western countries has been institutionalized as a rite of passage for young people, serves functions that extend far beyond the immediate benefits to recipients: it builds social capital, bridges divides between communities that rarely interact, and cultivates a sense of agency in volunteers themselves.',
+      main:'<mark>Volunteerism serves functions</mark>（主谓宾）',
+      mod:'<span class="c1">which has been institutionalized as a rite of passage</span> — 非限制性定语从句<br><span class="c1">that extend far beyond the immediate benefits</span> — 定语从句修饰functions<br><span class="c1">that rarely interact</span> — 定语从句修饰communities<br><span class="c2">in volunteers themselves</span> — 地点状语',
+      trans:'志愿服务在许多西方国家已被制度化为年轻人的成年礼，它所发挥的作用远远超出了对受助者的直接利益：它建立社会资本，在很少互动的社区之间架起桥梁，并在志愿者自身培养一种能动感。',
+      vocab:'volunteerism 志愿服务 | institutionalize 制度化 | rite of passage 成人礼 | recipient 接受者 | social capital 社会资本 | bridge 架桥 | agency 能动性' },
+    { id:'soc12', src:'2023 B篇', en:'Global citizenship education, which has been adopted by an increasing number of national curricula, seeks not merely to impart knowledge about world affairs but to cultivate the dispositions—empathy, critical reflection, and a willingness to act—that are necessary for addressing transnational challenges, from climate change to human rights violations.',
+      main:'<mark>education seeks not to impart knowledge but to cultivate dispositions</mark>',
+      mod:'<span class="c1">which has been adopted by curricula</span> — 非限制性定语从句<br><span class="c2">not merely to impart knowledge but to cultivate dispositions</span> — not...but...并列目的状语<br><span class="c1">that are necessary for addressing challenges</span> — 定语从句修饰dispositions<br><span class="c2">from climate change to human rights violations</span> — 介词短语说明challenges',
+      trans:'全球公民教育已被越来越多国家的课程体系所采用，它不仅仅是为了传授关于世界事务的知识，而是为了培养应对跨国挑战——从气候变化到人权侵犯——所必需的性情：共情、批判性反思和行动的意愿。',
+      vocab:'curriculum 课程体系 | adopt 采用 | impart 传授 | cultivate 培养 | disposition 性情/倾向 | empathy 共情 | transnational 跨国的' },
+  ],
+  '📝 完形填空': [
+    { id:'clz1', src:'2025 完形', en:'Once in a lecture, the professor tried repeating my name after me over and over in front of thirty classmates. I really did not know whether I should continue correcting him or simply drop the matter.',
+      main:'① <mark>the professor tried repeating my name</mark> ② <mark>I did not know whether...</mark>',
+      mod:'<span class="c2">Once in a lecture</span> — 时间状语<br><span class="c2">in front of thirty classmates</span> — 地点状语<br><span class="c1">whether I should continue correcting him or simply drop the matter</span> — 宾语从句（whether...or并列两个选项）',
+      trans:'有一次在课堂上，教授当着三十个同学的面一遍又一遍地跟读我的名字。我真的不知道我是应该继续纠正他还是干脆算了。',
+      vocab:'lecture 讲座/课堂 | repeat 重复 | continue 继续 | correct 纠正 | simply 仅仅/干脆 | drop the matter 放下这件事' },
+    { id:'clz2', src:'2024 完形', en:'As I watched her struggle with the heavy suitcase, I was reminded of my own arrival in this city years ago, when a stranger\'s unexpected kindness had made me feel less alone.',
+      main:'<mark>I was reminded of my own arrival</mark>（被动语态）',
+      mod:'<span class="c2">As I watched her struggle with the heavy suitcase</span> — As时间状语从句<br><span class="c1">when a stranger\'s unexpected kindness had made me feel less alone</span> — 定语从句修饰years ago',
+      trans:'当我看着她费力地搬着沉重的行李箱时，我想起了多年前自己刚到这个城市时，一个陌生人不经意的善意曾让我不那么孤独。',
+      vocab:'struggle 挣扎/费力 | suitcase 行李箱 | remind of 使想起 | arrival 到达 | unexpected 意料之外的 | kindness 善意' },
+    { id:'clz3', src:'2023 完形', en:'It was not until I had spent weeks practicing that I realized improvement does not come from talent alone but from consistent effort, a lesson that has shaped my approach to every challenge since.',
+      main:'<mark>I realized that...</mark>（强调句型 It was...that...）',
+      mod:'<span class="c2">It was not until I had spent weeks practicing</span> — 强调句型 + 时间状语<br><span class="c1">that improvement does not come from talent alone but from consistent effort</span> — 宾语从句<br><span class="c1">a lesson that has shaped my approach</span> — 同位语 + 定语从句',
+      trans:'直到我花了几周时间练习后，我才意识到进步不是仅靠天赋，而是靠持续的努力——这一教训从此塑造了我面对每一个挑战的方式。',
+      vocab:'improvement 进步 | talent 天赋 | alone 仅仅 | consistent 持续的 | effort 努力 | shape 塑造 | approach 方法' },
+    { id:'clz4', src:'2024 完形', en:'The moment I stepped onto the stage, my mind went completely blank. The speech I had rehearsed a hundred times seemed to have vanished, and all I could hear was the pounding of my own heart—until I spotted my teacher in the third row, nodding with a quiet confidence that somehow became my own.',
+      main:'① <mark>my mind went blank</mark> ② <mark>all I could hear was the pounding</mark>',
+      mod:'<span class="c2">The moment I stepped onto the stage</span> — 时间状语从句<br><span class="c1">(that) I had rehearsed a hundred times</span> — 定语从句修饰speech<br><span class="c2">until I spotted my teacher</span> — 时间状语从句<br><span class="c1">that somehow became my own</span> — 定语从句修饰confidence',
+      trans:'我踏上舞台的那一刻，大脑一片空白。我练习了一百遍的演讲似乎消失了，我只能听到自己的心跳——直到我发现了坐在第三排的老师，她以一种安静的自信点了点头，不知怎的，那种自信也成了我自己的。',
+      vocab:'go blank 一片空白 | rehearse 排练 | vanish 消失 | pound 砰砰跳 | spot 发现 | nod 点头 | confidence 自信' },
+    { id:'clz5', src:'2025 完形', en:'Mr. Chen was not the kind of teacher who delivered inspiring speeches or promised to change your life. What he did was simpler and far more difficult: he noticed when you were struggling, asked questions instead of offering answers, and stayed long after school hours to help—not because it was his job, but because he believed that every student had a story worth hearing.',
+      main:'① <mark>Mr. Chen was not the kind of teacher</mark> ② <mark>What he did was simpler and more difficult</mark>',
+      mod:'<span class="c1">who delivered speeches or promised to change your life</span> — 定语从句<br><span class="c1">What he did</span> — 主语从句<br><span class="c2">when you were struggling</span> — 宾语从句作noticed的宾语<br><span class="c1">that every student had a story worth hearing</span> — 宾语从句<br><span class="c2">not because it was his job, but because he believed</span> — not because...but because...原因状语并列',
+      trans:'陈老师不是那种发表鼓舞人心的演讲或承诺改变你的人生的老师。他所做的更简单，也更困难：他注意到你何时在挣扎，提问而非给答案，放学后留很久来帮忙——不是因为这是他的工作，而是因为他相信每个学生都有一个值得聆听的故事。',
+      vocab:'deliver 发表 | inspiring 鼓舞人心的 | notice 注意到 | struggle 挣扎 | worth 值得' },
+    { id:'clz6', src:'2023 完形', en:'They had nothing in common—she was a retired librarian who loved classical music; he was a teenage skateboarder whose playlist consisted entirely of hip-hop. Yet the community garden, where they were randomly assigned adjacent plots, became the unlikely ground where a friendship took root, proving that connection often flourishes not despite differences but because of the curiosity those differences inspire.',
+      main:'① <mark>They had nothing in common</mark> ② <mark>the garden became the ground</mark>',
+      mod:'<span class="c1">who loved classical music</span> — 定语从句修饰librarian<br><span class="c1">whose playlist consisted of hip-hop</span> — 定语从句修饰skateboarder<br><span class="c1">where they were assigned plots</span> — 定语从句修饰garden<br><span class="c1">where a friendship took root</span> — 定语从句修饰ground<br><span class="c2">proving that connection flourishes not despite but because of</span> — 分词作结果状语',
+      trans:'他们毫无共同之处——她是热爱古典音乐的退休图书管理员，他是播放列表只有嘻哈的青少年滑板手。然而，他们被随机分配到相邻地块的社区花园，却成了友谊扎根的不可能之地，证明连接往往不是因为差异的存在而枯竭，而是因为那些差异所激发的好奇心而蓬勃发展。',
+      vocab:'retired 退休的 | librarian 图书管理员 | skateboarder 滑板手 | adjacent 相邻的 | plot 地块 | take root 扎根 | flourish 蓬勃发展 | curiosity 好奇心 | inspire 激发' },
+    { id:'clz7', src:'2024 完形', en:'For years, I had avoided the ocean. The fear that had taken hold of me after a childhood accident was not rational—I knew that—but knowing did nothing to loosen its grip. Standing at the water\'s edge on that summer morning, my daughter\'s small hand in mine, I realized that the only thing more terrifying than facing my fear was teaching her, by my example, that fear was something you surrendered to.',
+      main:'① <mark>I had avoided the ocean</mark> ② <mark>I realized that...</mark>',
+      mod:'<span class="c1">that had taken hold of me</span> — 定语从句修饰fear<br><span class="c2">after a childhood accident</span> — 时间状语<br><span class="c2">Standing at the water\'s edge</span> — 分词作伴随状语<br><span class="c1">that the only thing was teaching her that...</span> — 宾语从句<br><span class="c2">that fear was something you surrendered to</span> — 宾语从句',
+      trans:'多年来，我一直回避大海。童年一次意外后攫住我的恐惧并不理性——我知道这一点——但知道无助于松开它的控制。那个夏日早晨，站在水边，女儿的小手握在我手中，我意识到唯一比面对我的恐惧更可怕的事，就是用我的榜样教她恐惧是你屈服的东西。',
+      vocab:'avoid 回避 | rational 理性的 | loosen 松开 | grip 控制 | terrifying 可怕的 | surrender 屈服' },
+    { id:'clz8', src:'2025 完形', en:'The misunderstanding arose from a single word—one that sounded similar in both languages but carried entirely different meanings. What she intended as a compliment was received as an insult, and by the time the confusion was untangled, both parties had already formed impressions that would take months to revise.',
+      main:'① <mark>The misunderstanding arose</mark> ② <mark>what she intended was received as an insult</mark>',
+      mod:'<span class="c1">that sounded similar but carried different meanings</span> — 定语从句修饰word<br><span class="c1">What she intended as a compliment</span> — 主语从句<br><span class="c2">by the time the confusion was untangled</span> — 时间状语从句<br><span class="c1">that would take months to revise</span> — 定语从句修饰impressions',
+      trans:'误解源自一个词——一个在两种语言中发音相似但含义完全不同的词。她本意是赞美，却被理解为侮辱，等到混淆被理清时，双方已经形成了需要数月才能修正的印象。',
+      vocab:'misunderstanding 误解 | arise 产生 | intend 本意 | compliment 赞美 | insult 侮辱 | untangle 理清 | revise 修正' },
+    { id:'clz9', src:'2023 完形', en:'When the cashier handed me twice the change I was owed, the temptation to pocket the extra money flickered through my mind—a fleeting thought I was not proud of but could not deny. I returned it, not because anyone was watching, but because I remembered my grandmother\'s words: character is what you do when no one is looking.',
+      main:'① <mark>the temptation flickered</mark> ② <mark>I returned it</mark>',
+      mod:'<span class="c2">When the cashier handed me twice the change</span> — 时间状语从句<br><span class="c1">(that) I was owed</span> — 定语从句修饰change<br><span class="c1">(that/which) I was not proud of but could not deny</span> — 定语从句修饰thought<br><span class="c2">not because anyone was watching, but because I remembered</span> — 原因状语并列<br><span class="c1">what you do when no one is looking</span> — 表语从句',
+      trans:'当收银员递给我应付零钱两倍的找零时，将多余的钱装进口袋的诱惑在我脑海中一闪而过——那是我不引以为豪却无法否认的转瞬念头。我还回了它，不是因为有人在看，而是因为我记起了祖母的话：品格是没人在看时你所做的事。',
+      vocab:'cashier 收银员 | change 零钱 | temptation 诱惑 | flicker 闪烁 | fleeting 转瞬的 | deny 否认 | character 品格' },
+    { id:'clz10', src:'2024 完形', en:'The second chance came in a form I almost did not recognize. It was not a dramatic moment of redemption but a quiet opportunity—an entry-level position in a field I knew nothing about—that required me to start over at an age when most of my peers were settling into established careers. Saying yes felt like admitting failure; saying no meant accepting it.',
+      main:'① <mark>The second chance came</mark> ② <mark>Saying yes felt like admitting failure</mark>',
+      mod:'<span class="c1">(that) I almost did not recognize</span> — 定语从句修饰form<br><span class="c1">(that) I knew nothing about</span> — 定语从句修饰field<br><span class="c1">that required me to start over</span> — 定语从句修饰opportunity<br><span class="c2">when most of my peers were settling into careers</span> — 定语从句修饰age',
+      trans:'第二次机会以我几乎未认出的形式来临。那不是一个戏剧性的救赎时刻，而是一个安静的机会——一个我完全不了解的领域的入门职位——要求我在大多数同龄人已经安顿于既定职业的年龄重新开始。说是感觉像是承认失败；说不意味着接受失败。',
+      vocab:'recognize 认出 | dramatic 戏剧性的 | redemption 救赎 | entry-level 入门的 | start over 重新开始 | peer 同龄人 | established 既定的' },
+    { id:'clz11', src:'2025 完形', en:'He was not the person you would notice in a crowd—soft-spoken, unassuming, the kind of neighbor who collected your mail when you were away without ever being asked. It was only after his passing that the community discovered the quiet generosity that had defined his life: scholarships anonymously funded, hospital bills quietly paid, letters written to lonely strangers.',
+      main:'① <mark>He was not the person</mark> ② <mark>the community discovered the generosity</mark>',
+      mod:'<span class="c1">(who) you would notice in a crowd</span> — 定语从句修饰person<br><span class="c1">who collected your mail when you were away</span> — 定语从句修饰neighbor<br><span class="c2">It was only after his passing that...</span> — 强调句型<br><span class="c1">that had defined his life</span> — 定语从句修饰generosity',
+      trans:'他不是你在人群中会注意到的那种人——轻声细语、不张扬，是那种不需被请求就会在你外出时帮你收邮件的邻居。直到他去世后，社区才发现定义了他一生的安静慷慨：匿名资助的奖学金、悄悄支付的医院账单、写给孤独陌生人的信件。',
+      vocab:'unassuming 不张扬的 | passing 去世 | generosity 慷慨 | anonymously 匿名地 | fund 资助' },
+    { id:'clz12', src:'2023 完形', en:'The decision to leave a stable job and pursue what I loved—a choice that looked reckless on paper—was not made in a moment of clarity but through months of small, almost imperceptible shifts. Each morning I woke a little earlier to paint before work; each evening I stayed up a little later to study the artists I admired, until one day the life I wanted no longer felt like a dream I was postponing but a reality I was already inhabiting.',
+      main:'<mark>The decision was not made in a moment but through shifts</mark>',
+      mod:'<span class="c1">that looked reckless on paper</span> — 定语从句修饰choice<br><span class="c2">until one day the life felt like a reality</span> — 时间状语从句<br><span class="c1">(that) I wanted</span> — 定语从句修饰life<br><span class="c1">(that) I was postponing</span> — 定语从句修饰dream<br><span class="c1">(that) I was already inhabiting</span> — 定语从句修饰reality',
+      trans:'离开稳定工作去追求我所热爱的事的决定——一个在纸面上看起来很鲁莽的选择——不是在一个清醒的时刻做出的，而是通过数月微小、几乎不可察觉的转变。每天早上我早起一点在上班前画画，每天晚上我晚睡一点研究我钦佩的艺术家，直到有一天我想要的生活不再感觉像是我在推迟的梦想，而是我已经生活在其中的现实。',
+      vocab:'stable 稳定的 | pursue 追求 | reckless 鲁莽的 | clarity 清醒 | imperceptible 不可察觉的 | postpone 推迟 | inhabit 居住/生活在' },
+  ],
+  '🔗 七选五': [
+    { id:'qxw1', src:'2025 七选五', en:'Are you looking for a way to bring your family together? Hoping to find a hobby that can be shared by both the little ones and adults? The answer may lie in something as simple as a weekly board game night.',
+      main:'① <mark>Are you looking for a way?</mark> ② <mark>(Are you) Hoping to find a hobby?</mark> ③ <mark>The answer may lie in something</mark>',
+      mod:'<span class="c2">to bring your family together</span> — 不定式作定语修饰way<br><span class="c1">that can be shared by both the little ones and adults</span> — 定语从句修饰hobby<br><span class="c2">as simple as a weekly board game night</span> — 介词短语修饰something',
+      trans:'你在寻找一种能让家人聚在一起的方式吗？希望能找到一个小孩和成年人都能共享的爱好？答案可能就藏在像每周桌游之夜这样简单的事情中。',
+      vocab:'bring together 聚在一起 | hobby 爱好 | little ones 小孩子 | lie in 在于 | board game 桌游' },
+    { id:'qxw2', src:'2024 七选五', en:'The key to effective note-taking is not writing down everything you hear, but rather identifying the main ideas and organizing them in a structure that makes sense to you personally.',
+      main:'<mark>The key is not writing...but identifying and organizing...</mark>',
+      mod:'<span class="c2">to effective note-taking</span> — 介词短语修饰key<br><span class="c1">everything (that) you hear</span> — 定语从句省略that<br><span class="c1">that makes sense to you personally</span> — 定语从句修饰structure',
+      trans:'有效记笔记的关键不是写下你听到的一切，而是识别主要观点并将它们组织成一个对你个人有意义的结构。',
+      vocab:'effective 有效的 | note-taking 记笔记 | identify 识别 | organize 组织 | structure 结构 | make sense 有意义' },
+    { id:'qxw3', src:'2023 七选五', en:'While it may seem counterintuitive, taking regular breaks during study sessions has been proven to improve both concentration and long-term retention of information, as the brain needs time to process and consolidate what it has learned.',
+      main:'<mark>taking regular breaks has been proven to improve concentration and retention</mark>',
+      mod:'<span class="c2">While it may seem counterintuitive</span> — While让步状语从句<br><span class="c2">during study sessions</span> — 时间状语<br><span class="c2">as the brain needs time</span> — as原因状语从句<br><span class="c2">to process and consolidate what it has learned</span> — 不定式作目的状语',
+      trans:'虽然这看起来可能违反直觉，但在学习过程中定期休息已被证明能提高注意力和信息的长期记忆，因为大脑需要时间来加工和巩固它所学到的内容。',
+      vocab:'counterintuitive 违反直觉的 | regular 定期的 | session 时段 | concentration 注意力 | retention 保持/记忆 | consolidate 巩固' },
+    { id:'qxw4', src:'2025 七选五', en:'Effective time management is not about squeezing as many tasks as possible into your day—a strategy that invariably leads to burnout—but about making deliberate choices regarding where your attention goes, recognizing that not everything that is urgent is important, and that not everything that is important can be measured by productivity metrics.',
+      main:'<mark>time management is not about squeezing tasks but about making choices</mark>',
+      mod:'<span class="c1">a strategy that invariably leads to burnout</span> — 同位语 + 定语从句<br><span class="c2">regarding where your attention goes</span> — 介词短语修饰choices<br><span class="c2">recognizing that...</span> — 分词作伴随状语<br><span class="c1">that not everything that is urgent is important</span> — 宾语从句（嵌套定语从句）<br><span class="c1">that not everything that is important can be measured</span> — 并列宾语从句',
+      trans:'有效的时间管理不是将尽可能多的任务挤入一天——这种策略无一例外会导致倦怠——而是关于做出有意识的选择，决定你的注意力放在哪里，认识到并非所有紧急的事都重要，也并非所有重要的事都能用生产力指标来衡量。',
+      vocab:'squeeze 挤压 | invariably 无一例外地 | burnout 倦怠 | deliberate 有意的 | urgent 紧急的 | measure 衡量 | productivity 生产力' },
+    { id:'qxw5', src:'2024 七选五', en:'The fear of public speaking, which consistently ranks among the most common phobias, can be managed not by eliminating anxiety—a goal that is neither realistic nor desirable, since a certain level of nervousness can sharpen performance—but by reframing the experience as a conversation rather than a performance.',
+      main:'<mark>The fear can be managed not by eliminating anxiety but by reframing the experience</mark>',
+      mod:'<span class="c1">which ranks among the most common phobias</span> — 非限制性定语从句<br><span class="c2">a goal that is neither realistic nor desirable</span> — 同位语 + 定语从句<br><span class="c2">since nervousness can sharpen performance</span> — 原因状语从句<br><span class="c2">as a conversation rather than a performance</span> — 宾语补足语',
+      trans:'公开演讲的恐惧一直位列最常见的恐惧症之一，它可以通过将体验重新框定为对话而非表演来管理，而不是消除焦虑——那是一个既不现实也不可取的目标，因为一定程度的紧张可以提升表现。',
+      vocab:'rank 排名 | phobia 恐惧症 | eliminate 消除 | realistic 现实的 | desirable 可取的 | sharpen 使敏锐 | reframe 重新框定' },
+    { id:'qxw6', src:'2023 七选五', en:'Reading widely—across genres, cultures, and time periods—does more than expand vocabulary and knowledge; it cultivates what psychologists call "cognitive empathy," the capacity to inhabit perspectives radically different from one\'s own, a skill that has become increasingly vital in a world where polarization threatens to collapse complex issues into simplistic binaries.',
+      main:'<mark>Reading does more than expand vocabulary; it cultivates cognitive empathy</mark>',
+      mod:'<span class="c2">across genres, cultures, and time periods</span> — 范围状语<br><span class="c1">what psychologists call "cognitive empathy"</span> — 宾语从句<br><span class="c2">the capacity to inhabit perspectives</span> — 同位语解释empathy<br><span class="c1">a skill that has become vital</span> — 同位语 + 定语从句<br><span class="c1">where polarization threatens to collapse issues into binaries</span> — 定语从句修饰world',
+      trans:'广泛阅读——跨越体裁、文化和时代——不仅仅是扩展词汇和知识；它培养心理学家所说的"认知共情"，即理解与自己截然不同观点的能力，在极化威胁着将复杂问题坍塌为简单二元对立的世界中，这一技能变得越来越重要。',
+      vocab:'genre 体裁 | expand 扩展 | cognitive 认知的 | empathy 共情 | inhabit 理解/栖息于 | perspective 视角 | polarization 极化 | binary 二元对立' },
+    { id:'qxw7', src:'2025 七选五', en:'Goal setting, when done effectively, involves more than articulating a desired outcome—it requires breaking that outcome into specific, measurable actions and, crucially, building in mechanisms for accountability that transform vague intentions into concrete commitments.',
+      main:'<mark>Goal setting involves more than articulating an outcome—it requires breaking it into actions and building mechanisms</mark>',
+      mod:'<span class="c2">when done effectively</span> — 时间/条件状语（省略it is）<br><span class="c2">into specific, measurable actions</span> — 介词短语作状语<br><span class="c1">that transform vague intentions into concrete commitments</span> — 定语从句修饰mechanisms',
+      trans:'有效的目标设定不仅仅是用语言表达一个期望的结果——它需要将结果分解为具体的、可衡量的行动，并且关键的是，建立问责机制，将模糊的意图转化为具体的承诺。',
+      vocab:'articulate 清晰表达 | outcome 结果 | measurable 可衡量的 | crucially 关键的是 | accountability 问责 | vague 模糊的 | intention 意图 | commitment 承诺' },
+    { id:'qxw8', src:'2024 七选五', en:'Stress management techniques that focus solely on relaxation—deep breathing, meditation, taking warm baths—overlook a crucial dimension of the problem: research suggests that the most effective buffer against stress is not the absence of demands but the presence of meaningful connections and a sense of purpose, both of which transform potentially overwhelming challenges into manageable pursuits.',
+      main:'<mark>techniques overlook a dimension: research suggests that...</mark>',
+      mod:'<span class="c1">that focus solely on relaxation</span> — 定语从句修饰techniques<br><span class="c1">that the buffer is not the absence but the presence</span> — 宾语从句<br><span class="c2">both of which transform challenges into pursuits</span> — 定语从句修饰connections和purpose',
+      trans:'只关注放松——深呼吸、冥想、洗温水澡——的压力管理技巧忽视了问题的关键维度：研究表明，最有效的压力缓冲不是没有需求，而是存在有意义的联系和目标感，这两者都将可能压倒性的挑战转变为可管理的追求。',
+      vocab:'solely 只/仅仅 | crucial 关键的 | buffer 缓冲 | absence 缺席/没有 | presence 存在 | purpose 目标 | overwhelming 压倒性的 | manageable 可管理的' },
+    { id:'qxw9', src:'2023 七选五', en:'Creative thinking, contrary to the popular belief that it is a mysterious gift bestowed upon a lucky few, is increasingly understood as a process—one that can be taught, practiced, and refined—involving the recombination of existing ideas in novel ways, a process that depends less on sudden inspiration than on sustained curiosity and a willingness to tolerate the discomfort of not knowing.',
+      main:'<mark>Creative thinking is understood as a process</mark>',
+      mod:'<span class="c2">contrary to the popular belief</span> — 介词短语作评注状语<br><span class="c1">that it is a mysterious gift bestowed upon a few</span> — 同位语从句解释belief<br><span class="c1">one that can be taught, practiced, and refined</span> — 同位语+定语从句<br><span class="c2">involving the recombination of ideas</span> — 分词短语修饰process<br><span class="c2">less on inspiration than on curiosity and willingness</span> — 比较结构',
+      trans:'创造性思维与流行的看法相反——并非赐予少数幸运儿的神秘天赋——它越来越被理解为一个可以教授、练习和完善的过程，涉及以新颖方式重新组合已有想法，这个过程更少依赖于突然的灵感，而更多依赖于持续的好奇心和容忍不知道的不适的意愿。',
+      vocab:'contrary to 与...相反 | mysterious 神秘的 | bestow 赐予 | refine 完善 | recombination 重新组合 | novel 新颖的 | inspiration 灵感 | sustained 持续的 | tolerate 容忍' },
+    { id:'qxw10', src:'2025 七选五', en:'The most effective teams, research consistently shows, are not those composed of the most talented individuals but those whose members share a psychological safety that allows them to admit mistakes, voice dissenting opinions, and ask for help without fear of humiliation—a finding that challenges the assumption that raw ability is the primary driver of collective success.',
+      main:'<mark>teams are not those but those</mark>（主系表）',
+      mod:'<span class="c1">composed of the most talented individuals</span> — 过去分词修饰those<br><span class="c1">whose members share a psychological safety</span> — 定语从句修饰those<br><span class="c1">that allows them to admit, voice, and ask</span> — 定语从句修饰safety<br><span class="c2">without fear of humiliation</span> — 伴随状语<br><span class="c1">a finding that challenges the assumption</span> — 同位语+定语从句',
+      trans:'研究一致表明，最有效的团队不是由最聪明的个体组成的团队，而是其成员共享一种心理安全感的团队——这种安全感让他们能够承认错误、表达不同意见和请求帮助而不必担心羞辱——这一发现挑战了原始能力是集体成功主要驱动力的假设。',
+      vocab:'composed of 由...组成 | psychological safety 心理安全感 | admit 承认 | dissenting 不同的 | humiliation 羞辱 | assumption 假设 | collective 集体的' },
+    { id:'qxw11', src:'2024 七选五', en:'Learning from failure, a phrase so often repeated that it risks becoming empty, requires more than acknowledging mistakes—it demands what educators call "productive reflection": the disciplined practice of examining not just what went wrong, but why it went wrong, and most importantly, what specific changes in behavior or strategy might lead to a different outcome next time.',
+      main:'<mark>Learning from failure requires more than acknowledging—it demands productive reflection</mark>',
+      mod:'<span class="c2">a phrase so often repeated that it risks becoming empty</span> — 同位语 + so...that结果状语<br><span class="c1">what educators call "productive reflection"</span> — 宾语从句<br><span class="c2">of examining not just what went wrong, but why, and what changes might lead to an outcome</span> — 介词短语修饰practice<br><span class="c1">what went wrong</span> — 宾语从句<br><span class="c1">why it went wrong</span> — 宾语从句<br><span class="c1">what changes might lead to an outcome</span> — 宾语从句',
+      trans:'从失败中学习——这是一个被重复太多以至于有变成空话的风险的说法——需要的不仅仅是承认错误；它需要教育者所说的"有效反思"：一种有纪律的实践，不仅要审视哪里出了错，还有为什么出错，以及最重要的是，行为或策略的哪些具体改变可能在下一次带来不同的结果。',
+      vocab:'acknowledge 承认 | productive 有效的 | disciplined 有纪律的 | examine 审视 | specific 具体的 | strategy 策略 | outcome 结果' },
+    { id:'qxw12', src:'2023 七选五', en:'Digital detox—periodically disconnecting from screens and social media—is often framed as an act of withdrawal, but its most profound benefit, according to those who practice it regularly, is not what you escape from but what you reclaim: the capacity for sustained attention, the pleasure of undivided presence, and the realization that your worth is not measured by your online engagement.',
+      main:'<mark>Digital detox is framed as withdrawal, but its benefit is not what you escape but what you reclaim</mark>',
+      mod:'<span class="c2">periodically disconnecting from screens</span> — 分词短语解释detox<br><span class="c2">according to those who practice it regularly</span> — 插入语表来源<br><span class="c1">what you escape from</span> — 表语从句<br><span class="c1">what you reclaim</span> — 表语从句<br><span class="c1">that your worth is not measured by your engagement</span> — 同位语从句解释realization',
+      trans:'数字排毒——定期断开屏幕和社交媒体——常被框定为戒断行为，但根据规律实践者的说法，它最深远的好处不是你所逃避的，而是你所重新获得的：持续注意力的能力、完整陪伴的愉悦，以及认识到你的价值不是由你在线上互动来衡量的。',
+      vocab:'detox 排毒 | periodically 定期地 | disconnect 断开 | withdrawal 戒断 | profound 深远的 | reclaim 重新获得 | sustained 持续的 | undivided 完整的 | engagement 互动' },
+  ]
+};
+
+// Render sentence filter buttons
+function renderSentenceFilter() {
+  const container = document.getElementById('sentenceFilter');
+  if (!container) return;
+  const allScenarios = Object.keys(sentenceScenarios);
+  let html = '<button class="btn btn-sm btn-primary sentence-filter-btn" data-filter="all" style="border-radius:20px">全部场景</button>';
+  allScenarios.forEach(s => {
+    html += `<button class="btn btn-sm sentence-filter-btn" data-filter="${s}" style="background:var(--bg-card-alt);color:var(--text);border:1px solid var(--border);border-radius:20px">${s}</button>`;
+  });
+  container.innerHTML = html;
+  // Add click handlers
+  container.querySelectorAll('.sentence-filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      container.querySelectorAll('.sentence-filter-btn').forEach(b => {
+        b.classList.remove('btn-primary');
+        b.style.background = 'var(--bg-card-alt)';
+        b.style.color = 'var(--text)';
+        b.style.border = '1px solid var(--border)';
+      });
+      this.classList.add('btn-primary');
+      this.style.background = '';
+      this.style.color = '';
+      this.style.border = '';
+      renderSentences(this.dataset.filter);
+    });
+  });
+}
+
+function renderSentences(filter) {
+  filter = filter || 'all';
+  const container = document.getElementById('sentenceContainer');
+  if (!container) return;
+  let sentences = [];
+  if (filter === 'all') {
+    Object.values(sentenceScenarios).forEach(arr => sentences = sentences.concat(arr));
+  } else {
+    sentences = sentenceScenarios[filter] || [];
+  }
+  let html = '';
+  sentences.forEach((s, i) => {
+    const sid = `s-${s.id}`;
+    html += `<div class="sentence-block" style="margin:12px 0">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:4px">
+        <span style="background:var(--accent);color:white;padding:2px 14px;border-radius:20px;font-size:0.82em">${s.id.replace(/[0-9]/g,'')}·第${i+1}句</span>
+        <span style="color:var(--text-muted);font-size:0.78em">${s.src}</span>
+      </div>
+      <p class="sentence-en">${s.en}</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">
+        <button class="btn btn-sm btn-primary" onclick="toggleById('${sid}-main')">🔍 显示主干</button>
+        <button class="btn btn-sm btn-warning" onclick="toggleById('${sid}-mod')">✂️ 显示修饰拆解</button>
+        <button class="btn btn-sm btn-success" onclick="toggleById('${sid}-trans')">🌐 显示翻译</button>
+        <button class="btn btn-sm tts-sentence-btn" style="background:#8E44AD;color:white" onclick="event.stopPropagation();ttsSentence(this.closest('.sentence-block').querySelector('.sentence-en'), this.closest('.sentence-block').querySelector('.sentence-en').textContent)">▶️ 朗读句子</button>
+	        <button class="btn btn-sm" style="background:#8E44AD;color:white" onclick="toggleById('${sid}-vocab')">📖 句中词汇</button>
+      </div>
+      <div id="${sid}-main" class="breakdown-box"><strong>🔍 主干（第一刀）：</strong><br>${s.main}</div>
+      <div id="${sid}-mod" class="breakdown-box"><strong>✂️ 修饰拆解（第二刀）：</strong><br>${s.mod}</div>
+      <div id="${sid}-trans" class="breakdown-box" style="border-left:3px solid var(--green)"><strong>🌐 翻译：</strong>${s.trans}</div>
+      <div id="${sid}-vocab" class="breakdown-box" style="border-left:3px solid #8E44AD"><strong>📖 句中词汇：</strong>${s.vocab}</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ═══ Theme Toggle ═══
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  if (isDark) {
+    html.removeAttribute('data-theme');
+    btn.textContent = '🌙';
+    localStorage.setItem('theme', 'light');
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.textContent = '☀️';
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+function applyTheme() {
+  const saved = localStorage.getItem('theme') || 'light';
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('themeToggle').textContent = '☀️';
+  }
+}
+
+// ═══ Background Music System ═══
+const bgMusic = document.getElementById('bgMusic');
+const musicTracks = [
+  { name: '肖邦 · 降D大调摇篮曲 Op.57', file: 'Berceuse in D-Flat Major, Op. 57.mp3', icon: '🌙' },
+  { name: '肖邦 · C小调第21号夜曲', file: 'Nocturne No.21 In C Minor Op.posth..mp3', icon: '✨' },
+  { name: '格鲁克 · 梅洛迪', file: 'Melodie De Gluck.mp3', icon: '🎼' }
+];
+let currentTrack = parseInt(localStorage.getItem('bgm_track') || '0');
+let isPlaying = false;
+bgMusic.volume = parseFloat(localStorage.getItem('bgm_volume') || '0.3');
+
+function initMusicPlayer() {
+  const container = document.getElementById('musicTracks');
+  container.innerHTML = musicTracks.map((t, i) => `
+    <button class="music-track-btn${i === currentTrack ? ' playing' : ''}" onclick="selectTrack(${i})">
+      <span class="track-icon">${t.icon}</span>
+      <span class="track-name">${t.name}</span>
+    </button>
+  `).join('');
+  document.getElementById('musicVolume').value = Math.round(bgMusic.volume * 100);
+  // Preload current track
+  bgMusic.src = musicTracks[currentTrack].file;
+}
+
+function toggleMusicMenu() {
+  const menu = document.getElementById('musicMenu');
+  menu.classList.toggle('show');
+}
+
+function selectTrack(idx) {
+  currentTrack = idx;
+  localStorage.setItem('bgm_track', idx);
+  bgMusic.src = musicTracks[idx].file;
+  bgMusic.load();
+  if (isPlaying) { bgMusic.play().catch(() => {}); }
+  updateTrackUI();
+  document.getElementById('musicToggle').classList.add('active');
+  isPlaying = true;
+  bgMusic.play().catch(() => { isPlaying = false; });
+}
+
+function updateTrackUI() {
+  document.querySelectorAll('.music-track-btn').forEach((btn, i) => {
+    btn.classList.toggle('playing', i === currentTrack);
+  });
+}
+
+function setMusicVolume(val) {
+  bgMusic.volume = val / 100;
+  localStorage.setItem('bgm_volume', bgMusic.volume);
+}
+
+// Click music toggle button to play/pause
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('musicToggle').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isPlaying) {
+      bgMusic.pause();
+      isPlaying = false;
+      document.getElementById('musicToggle').classList.remove('active');
+    } else {
+      bgMusic.src = musicTracks[currentTrack].file;
+      bgMusic.play().then(() => {
+        isPlaying = true;
+        document.getElementById('musicToggle').classList.add('active');
+      }).catch(() => {});
+    }
+  });
+  // Close menu on outside click
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('musicMenu');
+    const player = document.getElementById('musicPlayer');
+    if (menu.classList.contains('show') && !player.contains(e.target)) {
+      menu.classList.remove('show');
+    }
+  });
+  initMusicPlayer();
+});
+
+// ═══ Fish Cheer ═══
+const CHEERS = [
+  '宁鱼鱼加油！💪', '你可以的！🌟', '今天也很棒！✨', '继续冲刺！🔥',
+  '单词全记住！🧠', '高考必胜！🎯', '你是最棒的！💜', '鱼鱼冲鸭！🐟',
+  '每题都对！✅', '每日坚持！📅', '宁鱼鱼最厉害！👑', '40天提分！📈'
+];
+function cheerFish(name) {
+  const el = document.getElementById('fishCheer');
+  if (!el) return;
+  const msg = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+  el.textContent = msg;
+  el.classList.remove('pop');
+  void el.offsetWidth; // reflow
+  el.classList.add('pop');
+  // Brief bounce on fish
+  const fish = document.querySelector(name === 'nini' ? '.fish-nini' : '.fish-yuyu');
+  if (fish) { fish.style.transform = 'scale(1.4)'; setTimeout(() => { fish.style.transform = ''; }, 200); }
+}
+
+function init() {
+  TTSManager.init();
+  applyTheme();
+  // Reading vocab
+  renderVocabGrid('readingVocabGrid', [...academicVerbs, ...academicNouns, ...academicAdjs], '学术');
+  // Cloze
+  renderVocabGrid('clozeVocabGrid', clozeVerbs, '动词');
+  renderVocabGrid('confusingGrid', confusingPairs, '辨析');
+  // 七选五
+  renderVocabGrid('transitionGrid', transitions, '转折');
+  renderVocabGrid('causeGrid', causeEffect, '因果');
+  renderVocabGrid('additionGrid', additions, '递进');
+  renderVocabGrid('otherLogicGrid', otherLogic, '逻辑');
+  // Writing
+  renderPhraseList('writingSentenceList', writingSentences);
+  renderUpgradeGrid('upgradeGrid', upgradePairs);
+  // Continuation
+  renderPhraseList('continuationSentences', continuationSentences);
+  renderPhraseList('endingFamily', endingFamily);
+  renderPhraseList('endingFriendship', endingFriendship);
+  renderPhraseList('endingGrowth', endingGrowth);
+  renderPhraseList('endingUniversal', endingUniversal);
+  // Emotion vocab by categories
+  renderEmotionCategories('emotionVocabContainer');
+  // Extended writing vocab banks
+  renderVocabCategories('sceneVocabContainer', sceneVocabCategories);
+  renderVocabCategories('actionVocabContainer', actionVocabCategories);
+  renderVocabCategories('transitionVocabContainer', transitionVocabCategories);
+  // Plot templates
+  renderPlotTemplates('plotTemplatesContainer');
+  // Long sentence training
+  renderSentenceFilter();
+  renderSentences('all');
+  // Theme vocab
+  renderVocabGrid('techVocabGrid', techVocab, '科技');
+  renderVocabGrid('envVocabGrid', envVocab, '环保');
+  renderVocabGrid('healthVocabGrid', healthVocab, '健康');
+  renderVocabGrid('socialVocabGrid', socialVocab, '社会');
+  // Checkin
+  renderCheckinGrid();
+  renderNotes();
+  updateAllStats();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

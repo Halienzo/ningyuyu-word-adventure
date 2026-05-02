@@ -1,0 +1,11 @@
+# Ignore everything by default
+*
+
+# Un-ignore 单词冒险 system files
+!宁鱼鱼的单词冒险.html
+!.gitignore
+
+# Un-ignore background music (required by 单词冒险)
+!Berceuse in D-Flat Major, Op. 57.mp3
+!Nocturne No.21 In C Minor Op.posth..mp3
+!Melodie De Gluck.mp3
