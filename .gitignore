@@ -3,6 +3,7 @@
 
 # Un-ignore 单词冒险 system files
 !宁鱼鱼的单词冒险.html
+!index.html
 !.gitignore
 
 # Un-ignore background music (required by 单词冒险)
