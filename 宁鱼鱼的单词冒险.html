@@ -250,7 +250,7 @@ body {
 
 /* ── Flip Card System ── */
 .vocab-card {
-  height: 96px;
+  height: 112px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -274,7 +274,7 @@ body {
 }
 .vocab-card-front {
   background: linear-gradient(135deg, #F8FAFC, #EDE9FE);
-  flex-direction: column; gap: 2px;
+  flex-direction: column; gap: 3px;
 }
 [data-theme="dark"] .vocab-card-front {
   background: linear-gradient(135deg, #1E293B, #2D1B69);
@@ -284,7 +284,17 @@ body {
   text-align: center; word-break: break-word;
 }
 .vocab-card-front .pos-tag {
-  font-size: 0.72em; color: var(--text-muted); font-style: italic;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 20px; padding: 2px 8px; border-radius: 999px;
+  border: 1px solid rgba(124,58,237,0.22);
+  background: rgba(124,58,237,0.08);
+  font-size: 0.88em; line-height: 1; color: var(--primary);
+  font-weight: 700; font-style: normal;
+}
+.vocab-card-front .meaning-preview {
+  max-width: 100%; color: var(--text-secondary);
+  font-size: 0.82em; line-height: 1.25; text-align: center;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .vocab-card-front .learned-star {
   position: absolute; top: 6px; right: 8px;
@@ -306,6 +316,7 @@ body {
 [data-theme="dark"] .vocab-card-back { border-color: #7C3AED; }
 .vocab-card-back .meaning-hint {
   font-size: 0.95em; font-weight: 600; color: var(--text);
+  text-align: center;
 }
 .vocab-card-back .type-row {
   display: flex; gap: 5px; width: 100%;
@@ -496,9 +507,17 @@ mark { background: #FDE68A; padding: 1px 4px; border-radius: 3px; color: #1E293B
 .review-item {
   padding: 10px; margin: 5px 0; background: var(--bg-card-alt);
   border-radius: 6px; display: flex; justify-content: space-between;
-  align-items: center; border-left: 3px solid var(--warning);
+  align-items: center; gap: 10px; border-left: 3px solid var(--warning);
   color: var(--text);
 }
+.review-word-main { flex: 1; min-width: 0; }
+.review-word-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.review-pos-tag {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 2px 7px; border-radius: 999px; background: rgba(124,58,237,0.1);
+  color: var(--primary); font-size: 0.82em; font-weight: 700;
+}
+.review-meaning { display: block; margin-top: 2px; color: var(--text-secondary); font-size: 0.86em; }
 
 /* ── Table Styles ── */
 table { border-collapse: separate; border-spacing: 0; border-radius: var(--radius-sm); overflow: hidden; width: 100%; }
@@ -625,9 +644,10 @@ tr:nth-child(even) td { background: var(--bg-card-alt); }
 
   /* Vocab grid */
   .vocab-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-  .vocab-card { min-height: 100px; }
+  .vocab-card { min-height: 118px; }
   .vocab-card .word { font-size: 0.85em; }
-  .vocab-card .pos-tag { font-size: 0.65em; }
+  .vocab-card .pos-tag { font-size: 0.78em; padding: 2px 7px; }
+  .vocab-card .meaning-preview { font-size: 0.75em; }
   .vocab-card .meaning-hint { font-size: 0.8em; }
   .vocab-card .typing-input { font-size: 16px; padding: 6px 8px; height: 34px; }
   .vocab-card .type-row { flex-direction: column; gap: 4px; }
@@ -710,7 +730,7 @@ tr:nth-child(even) td { background: var(--bg-card-alt); }
   .card { padding: 10px 8px; border-radius: 10px; }
 
   .vocab-grid { grid-template-columns: 1fr 1fr; gap: 5px; }
-  .vocab-card { min-height: 88px; }
+  .vocab-card { min-height: 116px; }
   .vocab-card .word { font-size: 0.8em; }
   .vocab-card-inner { padding: 8px; }
 
@@ -735,6 +755,426 @@ tr:nth-child(even) td { background: var(--bg-card-alt); }
 
   /* Upgrade grid */
   .upgrade-grid { grid-template-columns: 1fr; gap: 5px; }
+}
+
+/* ==================== Calm Ocean Study UI refresh ==================== */
+:root {
+  --primary: #7C3AED;
+  --primary-light: #DDD6FE;
+  --primary-dark: #5B21B6;
+  --accent: #06B6D4;
+  --accent-light: #67E8F9;
+  --green: #10B981;
+  --green-dark: #047857;
+  --sky: #0EA5E9;
+  --sky-light: #7DD3FC;
+  --bg: #FBFBFF;
+  --bg-card: rgba(255,255,255,0.82);
+  --bg-card-alt: rgba(241,245,249,0.82);
+  --text: #241A42;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --border: rgba(124,58,237,0.14);
+  --shadow: 0 16px 44px rgba(76,29,149,0.08);
+  --shadow-md: 0 20px 54px rgba(76,29,149,0.12);
+  --shadow-lg: 0 28px 80px rgba(76,29,149,0.16);
+  --radius-sm: 14px;
+  --radius: 22px;
+  --radius-lg: 28px;
+}
+
+[data-theme="dark"] {
+  --primary: #C4B5FD;
+  --primary-light: #6D28D9;
+  --primary-dark: #8B5CF6;
+  --accent: #22D3EE;
+  --accent-light: #67E8F9;
+  --green: #34D399;
+  --green-dark: #10B981;
+  --sky: #38BDF8;
+  --bg: #0B1020;
+  --bg-card: rgba(23,24,45,0.82);
+  --bg-card-alt: rgba(30,41,59,0.82);
+  --text: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --border: rgba(167,139,250,0.2);
+  --shadow: 0 18px 48px rgba(0,0,0,0.34);
+  --shadow-lg: 0 28px 90px rgba(0,0,0,0.46);
+}
+
+body {
+  background:
+    radial-gradient(circle at 10% 4%, rgba(196,181,253,0.42), transparent 28%),
+    radial-gradient(circle at 92% 12%, rgba(34,211,238,0.22), transparent 26%),
+    linear-gradient(135deg, #FBFBFF 0%, #F6F1FF 52%, #EEFBFF 100%);
+  letter-spacing: 0;
+}
+[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 10% 4%, rgba(109,40,217,0.34), transparent 28%),
+    radial-gradient(circle at 92% 12%, rgba(14,165,233,0.18), transparent 26%),
+    linear-gradient(135deg, #0B1020 0%, #111827 52%, #082F49 100%);
+}
+
+.theme-toggle,
+.music-toggle {
+  border-radius: 14px;
+  border: 1px solid rgba(124,58,237,0.16);
+  background: rgba(255,255,255,0.76);
+  color: var(--primary);
+  box-shadow: 0 12px 28px rgba(76,29,149,0.1);
+  backdrop-filter: blur(16px);
+}
+.theme-toggle:hover,
+.music-toggle:hover {
+  border-color: rgba(124,58,237,0.34);
+  background: rgba(255,255,255,0.9);
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .theme-toggle,
+[data-theme="dark"] .music-toggle {
+  background: rgba(15,23,42,0.72);
+  color: var(--primary);
+}
+.music-toggle.active {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-color: transparent;
+  color: #fff;
+}
+.music-menu {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(18px);
+}
+
+.fish-mascot {
+  width: 54px;
+  height: 38px;
+  font-size: 0;
+  position: relative;
+  display: inline-block;
+  filter: drop-shadow(0 10px 18px rgba(14,165,233,0.22));
+  animation: fish-drift 4.8s ease-in-out infinite;
+}
+.fish-right .fish-mascot { animation-delay: .7s; }
+.fish-mascot::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 42px;
+  height: 30px;
+  border-radius: 60% 45% 45% 60%;
+  background:
+    radial-gradient(circle at 28% 34%, #172554 0 2.5px, transparent 3px),
+    linear-gradient(135deg, #A78BFA, #38BDF8);
+  box-shadow: inset -8px -8px 18px rgba(79,70,229,0.14);
+}
+.fish-mascot::after {
+  content: "";
+  position: absolute;
+  right: 1px;
+  top: 11px;
+  width: 0;
+  height: 0;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+  border-left: 15px solid #38BDF8;
+  transform-origin: left center;
+  animation: fish-tail-wag 1.2s ease-in-out infinite;
+}
+.fish-yuyu::before {
+  background:
+    radial-gradient(circle at 28% 34%, #172554 0 2.5px, transparent 3px),
+    linear-gradient(135deg, #C4B5FD, #67E8F9);
+}
+.fish-nini::before {
+  background:
+    radial-gradient(circle at 28% 34%, #172554 0 2.5px, transparent 3px),
+    linear-gradient(135deg, #A78BFA, #22D3EE);
+}
+.fish-mascot .fish-bubbles { font-size: 0; }
+.fish-mascot .fish-bubbles::before,
+.fish-mascot .fish-bubbles::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  border: 1px solid rgba(14,165,233,0.28);
+  background: rgba(255,255,255,0.45);
+  animation: bubble-rise 2.6s ease-in-out infinite;
+}
+.fish-mascot .fish-bubbles::before { width: 10px; height: 10px; left: 36px; top: 0; }
+.fish-mascot .fish-bubbles::after { width: 6px; height: 6px; left: 44px; top: -8px; animation-delay: .8s; }
+@keyframes bubble-rise {
+  0%,100% { opacity: .25; transform: translateY(4px) scale(.9); }
+  50% { opacity: .9; transform: translateY(-8px) scale(1); }
+}
+.fish-mascot.clicked {
+  animation: fish-click-pop .48s cubic-bezier(.2,1.4,.3,1), fish-drift 4.8s ease-in-out infinite .48s;
+}
+@keyframes fish-drift {
+  0%,100% { transform: translate3d(0,0,0) rotate(-2deg); }
+  35% { transform: translate3d(6px,-5px,0) rotate(3deg); }
+  70% { transform: translate3d(-3px,4px,0) rotate(-1deg); }
+}
+@keyframes fish-tail-wag {
+  0%,100% { transform: rotate(0deg) scaleX(1); }
+  50% { transform: rotate(10deg) scaleX(.88); }
+}
+@keyframes fish-click-pop {
+  0% { transform: scale(1) rotate(0deg); }
+  45% { transform: scale(1.34) rotate(-8deg); }
+  72% { transform: scale(.96) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.header {
+  max-width: 1180px;
+  margin: 18px auto 0;
+  padding: 34px 32px;
+  border-radius: 30px;
+  text-align: left;
+  background:
+    radial-gradient(circle at 92% 18%, rgba(34,211,238,0.24), transparent 28%),
+    linear-gradient(135deg, rgba(255,255,255,0.82), rgba(245,240,255,0.86));
+  color: var(--text);
+  border: 1px solid rgba(124,58,237,0.16);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(18px);
+}
+.header::before {
+  content: "";
+  position: absolute;
+  right: 34px;
+  top: 28px;
+  width: 82px;
+  height: 82px;
+  border-radius: 999px;
+  background: rgba(14,165,233,0.1);
+  border: 1px solid rgba(14,165,233,0.16);
+}
+.header h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.08;
+  margin-bottom: 10px;
+  font-weight: 900;
+  color: var(--text);
+}
+.header p {
+  max-width: 760px;
+  color: var(--text-secondary);
+  opacity: 1;
+  font-size: 1rem;
+}
+[data-theme="dark"] .header {
+  background:
+    radial-gradient(circle at 92% 18%, rgba(34,211,238,0.16), transparent 28%),
+    linear-gradient(135deg, rgba(23,24,45,0.86), rgba(30,27,75,0.82));
+}
+
+.stats-bar,
+.tab-nav,
+.card,
+.modal-content,
+.audio-player,
+.script-box,
+.breakdown-box,
+.template-box,
+.sentence-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+.stats-bar {
+  max-width: 1180px;
+  margin: 18px auto;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 24px;
+  padding: 14px;
+}
+.stat-card {
+  flex: 1 1 120px;
+  min-width: 110px;
+  padding: 12px 10px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.58);
+  border: 1px solid rgba(124,58,237,0.08);
+}
+[data-theme="dark"] .stat-card { background: rgba(15,23,42,0.38); }
+.stat-card .num {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-card .label { font-weight: 700; }
+
+.tab-nav {
+  max-width: 1180px;
+  margin: 0 auto 0;
+  border-radius: 22px;
+  padding: 8px;
+  gap: 6px;
+}
+.tab-btn {
+  border-radius: 14px;
+  font-weight: 800;
+  color: #59457F;
+}
+.tab-btn:hover {
+  background: rgba(124,58,237,0.08);
+  transform: translateY(-1px);
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 14px 34px rgba(124,58,237,0.26);
+}
+[data-theme="dark"] .tab-btn { color: var(--text-secondary); }
+
+.main-container {
+  max-width: 1180px;
+  margin: 0 auto 26px;
+}
+.card {
+  border-radius: 24px;
+  padding: 22px;
+}
+.card h2 {
+  border-bottom: 1px solid rgba(124,58,237,0.14);
+  color: var(--text);
+  font-weight: 900;
+}
+.card h3 { color: var(--text); font-weight: 850; }
+
+.btn,
+.check-btn,
+.music-track-btn {
+  border-radius: 14px;
+  font-weight: 850;
+  letter-spacing: 0;
+}
+.btn-primary,
+.btn-success,
+.vocab-card-back .check-btn {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 14px 34px rgba(124,58,237,0.24);
+}
+.btn-success { background: linear-gradient(135deg, #10B981, #06B6D4); }
+.btn-warning { background: linear-gradient(135deg, #F59E0B, #F97316); }
+.btn:hover,
+.vocab-card-back .check-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 42px rgba(124,58,237,0.28);
+}
+.btn-sm { border-radius: 12px; }
+
+.vocab-grid { gap: 12px; }
+.vocab-card {
+  height: 128px;
+  border-radius: 22px;
+}
+.vocab-card:hover { transform: translateY(-4px); }
+.vocab-card-front,
+.vocab-card-back {
+  border-radius: 22px;
+  border-color: rgba(124,58,237,0.16);
+  box-shadow: 0 16px 42px rgba(76,29,149,0.08);
+}
+.vocab-card-front {
+  background:
+    radial-gradient(circle at 88% 18%, rgba(34,211,238,0.12), transparent 26%),
+    rgba(255,255,255,0.84);
+}
+[data-theme="dark"] .vocab-card-front {
+  background:
+    radial-gradient(circle at 88% 18%, rgba(34,211,238,0.1), transparent 26%),
+    rgba(23,24,45,0.84);
+}
+.vocab-card-front .word { color: #4C1D95; font-size: 1.12em; }
+[data-theme="dark"] .vocab-card-front .word { color: var(--primary); }
+.vocab-card-front .pos-tag,
+.review-pos-tag {
+  background: #EDE9FE;
+  border: 1px solid rgba(124,58,237,0.18);
+  color: #6D28D9;
+}
+[data-theme="dark"] .vocab-card-front .pos-tag,
+[data-theme="dark"] .review-pos-tag {
+  background: rgba(124,58,237,0.28);
+  color: #EDE9FE;
+}
+.vocab-card-front .meaning-preview { color: var(--text-secondary); }
+.vocab-card-back {
+  background: var(--bg-card);
+}
+.vocab-card-back .typing-input,
+.note-area,
+.search-box {
+  border-radius: 14px;
+  border-color: rgba(124,58,237,0.18);
+  background: rgba(255,255,255,0.74);
+}
+[data-theme="dark"] .vocab-card-back .typing-input,
+[data-theme="dark"] .note-area,
+[data-theme="dark"] .search-box {
+  background: rgba(15,23,42,0.48);
+}
+
+.phrase-list li,
+.checkin-day,
+.review-item,
+.upgrade-item,
+.sentence-en {
+  border-radius: 16px;
+  border-left-width: 0;
+  border: 1px solid rgba(124,58,237,0.12);
+  background: rgba(255,255,255,0.62);
+}
+[data-theme="dark"] .phrase-list li,
+[data-theme="dark"] .checkin-day,
+[data-theme="dark"] .review-item,
+[data-theme="dark"] .upgrade-item,
+[data-theme="dark"] .sentence-en {
+  background: rgba(15,23,42,0.34);
+}
+.checkin-day.checked,
+.progress-fill {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+.checkin-day.today {
+  border-color: var(--accent);
+  color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .header,
+  .stats-bar,
+  .tab-nav,
+  .main-container {
+    max-width: none;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .header {
+    padding: 24px 18px;
+    border-radius: 24px;
+    text-align: left;
+  }
+  .stats-bar { padding: 10px; }
+  .stat-card { min-width: 0; flex: 1 1 calc(50% - 8px); }
+  .tab-nav { overflow-x: auto; justify-content: flex-start; flex-wrap: nowrap; }
+  .tab-btn { min-height: 40px; }
+  .card { padding: 16px; border-radius: 20px; }
+  .vocab-card { min-height: 132px; }
+  .fish-left { left: 8px; top: 52px; }
+  .fish-right { right: 8px; top: 52px; }
+  .fish-mascot { width: 42px; height: 30px; }
+  .fish-mascot::before { width: 34px; height: 24px; }
+  .fish-mascot::after { top: 9px; border-top-width: 7px; border-bottom-width: 7px; border-left-width: 12px; }
 }
 </style>
 </head>
@@ -1597,19 +2037,34 @@ const confusingPairs = [
 ];
 
 // ==================== RENDER FUNCTIONS ====================
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/"/g, '&quot;');
+}
+
 function makeVocabItem(word, meaning, pos) {
   const key = `vocab_${word.replace(/[^a-z]/gi,'').toLowerCase()}`;
   const learned = localStorage.getItem(key) === '1';
-  return `<div class="vocab-card${learned?' learned':''}" data-key="${key}" data-word="${word.replace(/"/g,'&quot;')}">
+  const safeWord = escapeAttr(word);
+  const safeMeaning = escapeAttr(meaning || '');
+  const safePos = escapeAttr(pos || '');
+  return `<div class="vocab-card${learned?' learned':''}" data-key="${key}" data-word="${safeWord}" data-meaning="${safeMeaning}" data-pos="${safePos}">
     <div class="vocab-card-inner">
       <div class="vocab-card-front" onclick="event.stopPropagation();flipCard(this.parentElement.parentElement)">
         <span class="learned-star">${learned?'⭐':''}</span>
         <button class="tts-btn tts-btn-card" onclick="event.stopPropagation();TTSManager.speakWord(this.closest('.vocab-card').getAttribute('data-word'), this.closest('.vocab-card-front'))">🔊</button>
-        <span class="word">${word}</span>
-        <span class="pos-tag">${pos||''}</span>
+        <span class="word">${escapeHtml(word)}</span>
+        <span class="pos-tag">${escapeHtml(pos || '')}</span>
+        <span class="meaning-preview">${escapeHtml(meaning || '')}</span>
       </div>
       <div class="vocab-card-back">
-        <span class="meaning-hint">${meaning}</span>
+        <span class="meaning-hint">${escapeHtml(meaning || '')}</span>
         <div class="type-row">
           <input type="text" class="typing-input" placeholder="输入英文拼写..." autocomplete="off"
             onclick="event.stopPropagation()"
@@ -1644,16 +2099,18 @@ function renderUpgradeGrid(containerId, items) {
     const key = `upgrade_${pair.low.replace(/[^a-z]/gi,'').toLowerCase()}`;
     const learned = localStorage.getItem(key) === '1';
     const word = pair.high; // pipe-separated answers
-    return `<div class="vocab-card${learned?' learned':''}" data-key="${key}" data-word="${word.replace(/"/g,'&quot;')}">
+    const meaning = `${pair.zh} → ${pair.high.split('|').join(' / ')}`;
+    return `<div class="vocab-card${learned?' learned':''}" data-key="${key}" data-word="${escapeAttr(word)}" data-meaning="${escapeAttr(meaning)}" data-pos="升级替换">
       <div class="vocab-card-inner">
         <div class="vocab-card-front" onclick="event.stopPropagation();flipCard(this.parentElement.parentElement)">
           <span class="learned-star">${learned?'⭐':''}</span>
           <button class="tts-btn tts-btn-card" onclick="event.stopPropagation();TTSManager.speakWord(this.closest('.vocab-card').getAttribute('data-word'), this.closest('.vocab-card-front'))">🔊</button>
-          <span class="word">${pair.low}</span>
+          <span class="word">${escapeHtml(pair.low)}</span>
           <span class="pos-tag">升级替换</span>
+          <span class="meaning-preview">${escapeHtml(pair.zh)}</span>
         </div>
         <div class="vocab-card-back">
-          <span class="meaning-hint">${pair.zh} → ${pair.high.split('|').join(' / ')}</span>
+          <span class="meaning-hint">${escapeHtml(meaning)}</span>
           <div class="type-row">
             <input type="text" class="typing-input" placeholder="输入任一替换词..." autocomplete="off"
               onclick="event.stopPropagation()"
@@ -2012,6 +2469,15 @@ function playSound(type) {
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.06);
+    } else if (type === 'cheer') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(659, ctx.currentTime);
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.06);
+      osc.frequency.setValueAtTime(1175, ctx.currentTime + 0.13);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.26);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.26);
     }
   } catch(e) { /* Silently fail if audio not available */ }
 }
@@ -2036,10 +2502,23 @@ function renderCheckinGrid() {
   updateCheckinStats();
 }
 
+function buildVocabIndex() {
+  const index = {};
+  document.querySelectorAll('.vocab-card[data-key]').forEach(card => {
+    index[card.dataset.key] = {
+      word: card.dataset.word || '',
+      meaning: card.dataset.meaning || '',
+      pos: card.dataset.pos || ''
+    };
+  });
+  return index;
+}
+
 function renderReviewQueue() {
   const container = document.getElementById('reviewQueue');
   if (!container) return;
   const today = new Date().toISOString().split('T')[0];
+  const vocabIndex = buildVocabIndex();
   let reviewItems = [];
   // Check all vocab items for review needs
   for (let i = 0; i < localStorage.length; i++) {
@@ -2061,8 +2540,18 @@ function renderReviewQueue() {
   } else {
     container.innerHTML = `<p>今天需要复习 <strong>${reviewItems.length}</strong> 个词汇（第${reviewItems[0]?.daysSince||''}天复习）：</p>` +
       reviewItems.slice(0, 30).map(item => {
-        const word = item.key.replace('vocab_', '');
-        return `<div class="review-item"><button class="tts-btn tts-btn-inline" style="width:40px;height:40px;min-width:40px;min-height:40px;font-size:0.85em;margin-right:6px" onclick="event.stopPropagation();TTSManager.speakWord('${word}', this)">🔊</button><span>📌 ${word}</span><span style="color:#999">${item.daysSince}天前学习</span></div>`;
+        const meta = vocabIndex[item.key] || {};
+        const word = meta.word || item.key.replace('vocab_', '');
+        const meaning = meta.meaning || '暂无中文释义';
+        const pos = meta.pos || '';
+        return `<div class="review-item">
+          <button class="tts-btn tts-btn-inline" data-word="${escapeAttr(word)}" style="width:40px;height:40px;min-width:40px;min-height:40px;font-size:0.85em;margin-right:6px" onclick="event.stopPropagation();TTSManager.speakWord(this.dataset.word, this)">🔊</button>
+          <span class="review-word-main">
+            <span class="review-word-line">📌 <strong>${escapeHtml(word)}</strong>${pos ? `<span class="review-pos-tag">${escapeHtml(pos)}</span>` : ''}</span>
+            <span class="review-meaning">${escapeHtml(meaning)}</span>
+          </span>
+          <span style="color:#999;white-space:nowrap">${item.daysSince}天前学习</span>
+        </div>`;
       }).join('');
   }
 }
@@ -2805,21 +3294,120 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ═══ Fish Cheer ═══
 const CHEERS = [
-  '宁鱼鱼加油！💪', '你可以的！🌟', '今天也很棒！✨', '继续冲刺！🔥',
-  '单词全记住！🧠', '高考必胜！🎯', '你是最棒的！💜', '鱼鱼冲鸭！🐟',
-  '每题都对！✅', '每日坚持！📅', '宁鱼鱼最厉害！👑', '40天提分！📈'
+  '宁鱼鱼加油，今天又向前一步！',
+  '宁鱼鱼稳住，单词正在变熟！',
+  '你刚刚又给大脑加了一颗星。',
+  '这一点点坚持很值钱。',
+  '慢慢来，也是在变强。',
+  '记住一个词，就多一条路。',
+  '宁鱼鱼今天的专注度很亮。',
+  '答错也不怕，下一次会更准。',
+  '这一轮很好，继续保持节奏。',
+  '单词海里你游得越来越稳。',
+  '高考词汇正在被你收服。',
+  '你比刚才又熟一点了。',
+  '先认出来，再背牢它。',
+  '小鱼看见你在认真前进。',
+  '今天的努力不会白做。',
+  '一次一张卡，记忆会扎根。',
+  '宁鱼鱼的英语雷达上线了。',
+  '这个词已经开始认识你了。',
+  '继续点，继续记，继续赢。',
+  '你正在把陌生变成熟悉。',
+  '每一次翻卡都有意义。',
+  '很好，保持这个学习手感。',
+  '你的词汇量正在悄悄长大。',
+  '宁鱼鱼冲刺但不着急。',
+  '先理解中文，再锁住英文。',
+  '把词性也记住，答题更稳。',
+  '这一秒的专注很漂亮。',
+  '宁鱼鱼已经进入学习模式。',
+  '复习不是重复，是升级。',
+  '这个节奏适合拿分。',
+  '你正在靠近更高分。',
+  '单词不是墙，是桥。',
+  '好样的，继续下一张。',
+  '你的记忆正在连线。',
+  '这次点击有进步的声音。',
+  '宁鱼鱼，别停，刚刚好。',
+  '今天多记一点，考场少慌一点。',
+  '你正在积累真正的底气。',
+  '小目标完成，大目标接近。',
+  '每个词都在给你加分。',
+  '这波学习很稳。',
+  '看中文，想英文，再复述。',
+  '看英文，想中文，再确认。',
+  '宁鱼鱼越来越会抓重点。',
+  '你的大脑在认真整理词库。',
+  '继续练，正确率会追上来。',
+  '这个词下次会更眼熟。',
+  '稳扎稳打就是最快的方法。',
+  '你正在把难词变成常词。',
+  'Good focus, Ningyuyu!',
+  'You are building real vocabulary power.',
+  'One card at a time.',
+  'Keep going, your memory is waking up.',
+  'Nice work, stay with the rhythm.',
+  'You are getting sharper.',
+  'This word is closer now.',
+  'Review makes recall stronger.',
+  'Small practice, big progress.',
+  'Your English brain is warming up.',
+  'Listen, notice, remember.',
+  'Read it, say it, own it.',
+  'You have got this round.',
+  'Accuracy grows from repetition.',
+  'This effort counts.',
+  'The next answer can be even better.',
+  'Keep the calm ocean pace.',
+  'Strong recall is being built.',
+  'You are turning practice into confidence.',
+  'Ningyuyu is on track.',
+  'Vocabulary mode is alive.',
+  'The fish team is cheering for you.',
+  'Another click, another step.',
+  'Keep your eyes on the meaning.',
+  'The part of speech matters too.',
+  '中文意思抓住了！',
+  '英文词性也稳住了！',
+  '翻卡一下，记忆亮一下。',
+  '背诵一遍，分数近一点。',
+  '宁鱼鱼今天很有耐心。',
+  '错题会变成提示牌。',
+  '熟词要稳，生词要慢。',
+  '看到词根就多想一秒。',
+  '听见发音就跟读一遍。',
+  '这个练习正在帮你长分。',
+  '小鱼双倍鼓励发送中。',
+  '宁宁说：你可以再多对一题。',
+  '鱼鱼说：继续游向高分。'
 ];
+let lastCheerMsg = '';
+function pickCheerMessage() {
+  if (CHEERS.length <= 1) return CHEERS[0] || '';
+  let msg = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+  if (msg === lastCheerMsg) {
+    msg = CHEERS[(CHEERS.indexOf(msg) + 1) % CHEERS.length];
+  }
+  lastCheerMsg = msg;
+  return msg;
+}
 function cheerFish(name) {
   const el = document.getElementById('fishCheer');
   if (!el) return;
-  const msg = CHEERS[Math.floor(Math.random() * CHEERS.length)];
+  const msg = pickCheerMessage();
   el.textContent = msg;
   el.classList.remove('pop');
   void el.offsetWidth; // reflow
   el.classList.add('pop');
-  // Brief bounce on fish
+  playSound('cheer');
   const fish = document.querySelector(name === 'nini' ? '.fish-nini' : '.fish-yuyu');
-  if (fish) { fish.style.transform = 'scale(1.4)'; setTimeout(() => { fish.style.transform = ''; }, 200); }
+  if (fish) {
+    fish.classList.remove('clicked');
+    void fish.offsetWidth;
+    fish.classList.add('clicked');
+    setTimeout(() => { fish.classList.remove('clicked'); }, 520);
+  }
 }
 
 function init() {

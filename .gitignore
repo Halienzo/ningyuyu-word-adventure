@@ -3,8 +3,11 @@
 
 # Un-ignore 单词冒险 system files
 !宁鱼鱼的单词冒险.html
+!宁鱼鱼的声音花园.html
 !index.html
 !.gitignore
+!tests/
+!tests/vocab-ui-regression.test.js
 
 # Un-ignore background music (required by 单词冒险)
 !Berceuse in D-Flat Major, Op. 57.mp3
