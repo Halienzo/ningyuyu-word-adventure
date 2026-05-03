@@ -8,6 +8,7 @@
 !.gitignore
 !tests/
 !tests/vocab-ui-regression.test.js
+!tests/mobile-tts-regression.test.js
 
 # Un-ignore background music (required by 单词冒险)
 !Berceuse in D-Flat Major, Op. 57.mp3

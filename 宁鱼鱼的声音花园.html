@@ -1286,6 +1286,7 @@ const TTSManager = (function() {
   const STORAGE_KEY = 'tts_settings';
   const CHUNK_THRESHOLD = 200;
   const DEFAULT_RATE = 0.85;
+  const TTS_START_DELAY_MS = 60;
   let settings = loadTtsSettings();
   let currentVoice = null;
   let utteranceQueue = [];
@@ -1314,6 +1315,20 @@ const TTSManager = (function() {
     ];
     for (const fn of tiers) { const v = voices.find(fn); if (v) return v; }
     return voices[0];
+  }
+
+  function warmUpSpeechSynthesis() {
+    if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') return;
+    if (utteranceQueue.length || isSpeakingFlag || speechSynthesis.speaking) return;
+    try {
+      if (speechSynthesis.paused) speechSynthesis.resume();
+      const u = new SpeechSynthesisUtterance();
+      u.text = 'ready';
+      u.lang = 'en-US';
+      u.volume = 0.01;
+      u.rate = 1;
+      speechSynthesis.speak(u);
+    } catch(e) {}
   }
 
   function splitText(text) {
@@ -1359,10 +1374,15 @@ const TTSManager = (function() {
       if (onEndCb) { const cb = onEndCb; onEndCb = null; cb(); }
       return;
     }
-    if (typeof SpeechSynthesisUtterance === 'undefined' || typeof speechSynthesis === 'undefined') return;
+    if (typeof SpeechSynthesisUtterance === 'undefined' || typeof speechSynthesis === 'undefined') {
+      utteranceQueue = []; isSpeakingFlag = false; updateStopFloat(false); clearHighlight();
+      return;
+    }
     const chunk = utteranceQueue.shift();
     const utter = new SpeechSynthesisUtterance(chunk);
+    utter.lang = 'en-US';
     utter.voice = currentVoice;
+    if (currentVoice && currentVoice.lang) utter.lang = currentVoice.lang;
     utter.rate = settings.rate;
     utter.volume = settings.volume;
     utter.onstart = function() { isSpeakingFlag = true; };
@@ -1374,7 +1394,10 @@ const TTSManager = (function() {
       }
       setTimeout(speakNext, 80);
     };
-    if (typeof speechSynthesis !== 'undefined') speechSynthesis.speak(utter);
+    if (typeof speechSynthesis !== 'undefined') {
+      if (speechSynthesis.paused) speechSynthesis.resume();
+      speechSynthesis.speak(utter);
+    }
   }
 
   return {
@@ -1397,7 +1420,10 @@ const TTSManager = (function() {
       if (opts.el) setHighlight(opts.el);
       if (opts.rate !== undefined) settings.rate = opts.rate;
       if (onStartCb) onStartCb();
-      speakNext();
+      if (typeof speechSynthesis !== 'undefined') {
+        if (speechSynthesis.paused) speechSynthesis.resume();
+      }
+      setTimeout(speakNext, TTS_START_DELAY_MS);
       return true;
     },
 
@@ -1435,13 +1461,14 @@ const TTSManager = (function() {
       });
       if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined') {
         const warmUp = function() {
-          const u = new SpeechSynthesisUtterance(''); u.volume = 0;
-          speechSynthesis.speak(u);
+          warmUpSpeechSynthesis();
+          document.removeEventListener('pointerdown', warmUp);
           document.removeEventListener('click', warmUp);
           document.removeEventListener('touchstart', warmUp);
         };
+        document.addEventListener('pointerdown', warmUp, { once: true, passive: true });
         document.addEventListener('click', warmUp, { once: true });
-        document.addEventListener('touchstart', warmUp, { once: true });
+        document.addEventListener('touchstart', warmUp, { once: true, passive: true });
       }
     }
   };
