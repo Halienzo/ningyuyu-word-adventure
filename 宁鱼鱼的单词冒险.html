@@ -2058,7 +2058,7 @@ function makeVocabItem(word, meaning, pos) {
     <div class="vocab-card-inner">
       <div class="vocab-card-front" onclick="event.stopPropagation();flipCard(this.parentElement.parentElement)">
         <span class="learned-star">${learned?'⭐':''}</span>
-        <button class="tts-btn tts-btn-card" onclick="event.stopPropagation();TTSManager.speakWord(this.closest('.vocab-card').getAttribute('data-word'), this.closest('.vocab-card-front'))">🔊</button>
+        <button class="tts-btn tts-btn-card" onclick="TTSManager.handleSpeakWordClick(event, this.closest('.vocab-card').getAttribute('data-word'), this.closest('.vocab-card-front'))">🔊</button>
         <span class="word">${escapeHtml(word)}</span>
         <span class="pos-tag">${escapeHtml(pos || '')}</span>
         <span class="meaning-preview">${escapeHtml(meaning || '')}</span>
@@ -2079,7 +2079,7 @@ function makeVocabItem(word, meaning, pos) {
 function makePhraseItem(text) {
   const key = `phrase_${text.substring(0,30).replace(/[^a-z]/gi,'')}`;
   const learned = localStorage.getItem(key) === '1';
-  return `<li class="${learned?'learned':''}" data-text="${text.replace(/"/g,'&quot;')}" onclick="togglePhrase(this,'${key}')"><button class="tts-btn tts-btn-inline" onclick="event.stopPropagation();TTSManager.speakWord(this.parentElement.getAttribute('data-text'), this.parentElement)">🔊</button>${text}</li>`;
+  return `<li class="${learned?'learned':''}" data-text="${text.replace(/"/g,'&quot;')}" onclick="togglePhrase(this,'${key}')"><button class="tts-btn tts-btn-inline" onclick="TTSManager.handleSpeakWordClick(event, this.parentElement.getAttribute('data-text'), this.parentElement)">🔊</button>${text}</li>`;
 }
 
 function renderVocabGrid(containerId, items, category) {
@@ -2104,7 +2104,7 @@ function renderUpgradeGrid(containerId, items) {
       <div class="vocab-card-inner">
         <div class="vocab-card-front" onclick="event.stopPropagation();flipCard(this.parentElement.parentElement)">
           <span class="learned-star">${learned?'⭐':''}</span>
-          <button class="tts-btn tts-btn-card" onclick="event.stopPropagation();TTSManager.speakWord(this.closest('.vocab-card').getAttribute('data-word'), this.closest('.vocab-card-front'))">🔊</button>
+          <button class="tts-btn tts-btn-card" onclick="TTSManager.handleSpeakWordClick(event, this.closest('.vocab-card').getAttribute('data-word'), this.closest('.vocab-card-front'))">🔊</button>
           <span class="word">${escapeHtml(pair.low)}</span>
           <span class="pos-tag">升级替换</span>
           <span class="meaning-preview">${escapeHtml(pair.zh)}</span>
@@ -2249,7 +2249,7 @@ const TTSManager = (function() {
   const STORAGE_KEY = 'tts_settings';
   const CHUNK_THRESHOLD = 200;
   const DEFAULT_RATE = 0.85;
-  const TTS_START_DELAY_MS = 60;
+  const TTS_LANG = 'en-GB';
   let settings = loadSettings();
   let currentVoice = null;
   let utteranceQueue = [];
@@ -2268,16 +2268,16 @@ const TTSManager = (function() {
     if (typeof speechSynthesis === 'undefined') return null;
     const voices = speechSynthesis.getVoices();
     if (!voices.length) return null;
-    if (settings.voiceName) { const m = voices.find(v => v.name === settings.voiceName); if (m) return m; }
+    if (settings.voiceName) {
+      const m = voices.find(v => v.name === settings.voiceName && v.lang.startsWith(TTS_LANG));
+      if (m) return m;
+    }
     const tiers = [
-      v => v.lang.startsWith('en-US') && /Google|Natural|Samantha|Zira|Microsoft|Karen/i.test(v.name),
-      v => v.lang.startsWith('en-GB') && /Female|Google|Fiona/i.test(v.name),
-      v => v.lang.startsWith('en-US'),
-      v => v.lang.startsWith('en-GB'),
-      v => v.lang.startsWith('en-')
+      v => v.lang.startsWith(TTS_LANG) && /Google UK|Google|Natural|Daniel|Serena|Kate|Oliver|Microsoft Sonia|Microsoft Ryan|Female|Fiona/i.test(v.name),
+      v => v.lang.startsWith(TTS_LANG)
     ];
     for (const fn of tiers) { const v = voices.find(fn); if (v) return v; }
-    return voices[0];
+    return null;
   }
 
   function warmUpSpeechSynthesis() {
@@ -2287,7 +2287,7 @@ const TTSManager = (function() {
       if (speechSynthesis.paused) speechSynthesis.resume();
       const u = new SpeechSynthesisUtterance();
       u.text = 'ready';
-      u.lang = 'en-US';
+      u.lang = TTS_LANG;
       u.volume = 0.01;
       u.rate = 1;
       speechSynthesis.speak(u);
@@ -2331,6 +2331,16 @@ const TTSManager = (function() {
     if (el) { currentEl = el; el.classList.add('tts-speaking'); }
   }
 
+  function resetSpeechState(cancelActiveSpeech) {
+    if (cancelActiveSpeech && typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+    utteranceQueue = [];
+    isSpeakingFlag = false;
+    updateStopFloat(false);
+    clearHighlight();
+    onStartCb = null;
+    onEndCb = null;
+  }
+
   function speakNext() {
     if (utteranceQueue.length === 0) {
       isSpeakingFlag = false; updateStopFloat(false); clearHighlight();
@@ -2343,7 +2353,7 @@ const TTSManager = (function() {
     }
     const chunk = utteranceQueue.shift();
     const utter = new SpeechSynthesisUtterance(chunk);
-    utter.lang = 'en-US';
+    utter.lang = TTS_LANG;
     utter.voice = currentVoice;
     if (currentVoice && currentVoice.lang) utter.lang = currentVoice.lang;
     utter.rate = settings.rate;
@@ -2367,14 +2377,15 @@ const TTSManager = (function() {
     getSettings: function() { return settings; },
     setRate: function(rate) { settings.rate = Math.max(0.5, Math.min(2.0, rate)); saveSettings(); },
     setVoice: function(name) { settings.voiceName = name; currentVoice = null; saveSettings(); },
-    getAvailableVoices: function() { if (typeof speechSynthesis === 'undefined') return []; return speechSynthesis.getVoices().filter(v => v.lang.startsWith('en-')); },
+    getAvailableVoices: function() { if (typeof speechSynthesis === 'undefined') return []; return speechSynthesis.getVoices().filter(v => v.lang.startsWith(TTS_LANG)); },
     isSpeaking: function() { return isSpeakingFlag || (typeof speechSynthesis !== 'undefined' && speechSynthesis.speaking); },
 
     speak: function(text, opts) {
       opts = opts || {};
       const clean = (text || '').trim();
       if (!clean) return false;
-      this.stop();
+      const hasActiveSpeech = typeof speechSynthesis !== 'undefined' && (speechSynthesis.speaking || speechSynthesis.pending || isSpeakingFlag);
+      resetSpeechState(hasActiveSpeech);
       if (!currentVoice) currentVoice = findBestVoice();
       utteranceQueue = splitText(clean);
       onStartCb = opts.onStart || null;
@@ -2386,7 +2397,7 @@ const TTSManager = (function() {
       if (typeof speechSynthesis !== 'undefined') {
         if (speechSynthesis.paused) speechSynthesis.resume();
       }
-      setTimeout(speakNext, TTS_START_DELAY_MS);
+      speakNext();
       return true;
     },
 
@@ -2394,13 +2405,17 @@ const TTSManager = (function() {
       return this.speak(text, { rate: DEFAULT_RATE, el: el });
     },
 
+    handleSpeakWordClick: function(e, text, el) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+      }
+      return this.speakWord(text, el);
+    },
+
     stop: function() {
-      if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
-      utteranceQueue = [];
-      isSpeakingFlag = false;
-      updateStopFloat(false);
-      clearHighlight();
-      onEndCb = null;
+      resetSpeechState(true);
     },
 
     init: function() {
@@ -2425,7 +2440,9 @@ const TTSManager = (function() {
       });
       // Warm up TTS on first interaction
       if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined') {
-        const warmUp = function() {
+        const warmUp = function(e) {
+          const target = e && e.target;
+          if (target && target.closest && target.closest('.tts-btn')) return;
           warmUpSpeechSynthesis();
           document.removeEventListener('pointerdown', warmUp);
           document.removeEventListener('click', warmUp);
@@ -2573,7 +2590,7 @@ function renderReviewQueue() {
         const meaning = meta.meaning || '暂无中文释义';
         const pos = meta.pos || '';
         return `<div class="review-item">
-          <button class="tts-btn tts-btn-inline" data-word="${escapeAttr(word)}" style="width:40px;height:40px;min-width:40px;min-height:40px;font-size:0.85em;margin-right:6px" onclick="event.stopPropagation();TTSManager.speakWord(this.dataset.word, this)">🔊</button>
+          <button class="tts-btn tts-btn-inline" data-word="${escapeAttr(word)}" style="width:40px;height:40px;min-width:40px;min-height:40px;font-size:0.85em;margin-right:6px" onclick="TTSManager.handleSpeakWordClick(event, this.dataset.word, this)">🔊</button>
           <span class="review-word-main">
             <span class="review-word-line">📌 <strong>${escapeHtml(word)}</strong>${pos ? `<span class="review-pos-tag">${escapeHtml(pos)}</span>` : ''}</span>
             <span class="review-meaning">${escapeHtml(meaning)}</span>

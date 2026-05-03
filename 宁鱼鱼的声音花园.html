@@ -1286,7 +1286,7 @@ const TTSManager = (function() {
   const STORAGE_KEY = 'tts_settings';
   const CHUNK_THRESHOLD = 200;
   const DEFAULT_RATE = 0.85;
-  const TTS_START_DELAY_MS = 60;
+  const TTS_LANG = 'en-GB';
   let settings = loadTtsSettings();
   let currentVoice = null;
   let utteranceQueue = [];
@@ -1305,16 +1305,16 @@ const TTSManager = (function() {
     if (typeof speechSynthesis === 'undefined') return null;
     const voices = speechSynthesis.getVoices();
     if (!voices.length) return null;
-    if (settings.voiceName) { const m = voices.find(v => v.name === settings.voiceName); if (m) return m; }
+    if (settings.voiceName) {
+      const m = voices.find(v => v.name === settings.voiceName && v.lang.startsWith(TTS_LANG));
+      if (m) return m;
+    }
     const tiers = [
-      v => v.lang.startsWith('en-US') && /Google|Natural|Samantha|Zira|Microsoft|Karen/i.test(v.name),
-      v => v.lang.startsWith('en-GB') && /Female|Google|Fiona/i.test(v.name),
-      v => v.lang.startsWith('en-US'),
-      v => v.lang.startsWith('en-GB'),
-      v => v.lang.startsWith('en-')
+      v => v.lang.startsWith(TTS_LANG) && /Google UK|Google|Natural|Daniel|Serena|Kate|Oliver|Microsoft Sonia|Microsoft Ryan|Female|Fiona/i.test(v.name),
+      v => v.lang.startsWith(TTS_LANG)
     ];
     for (const fn of tiers) { const v = voices.find(fn); if (v) return v; }
-    return voices[0];
+    return null;
   }
 
   function warmUpSpeechSynthesis() {
@@ -1324,7 +1324,7 @@ const TTSManager = (function() {
       if (speechSynthesis.paused) speechSynthesis.resume();
       const u = new SpeechSynthesisUtterance();
       u.text = 'ready';
-      u.lang = 'en-US';
+      u.lang = TTS_LANG;
       u.volume = 0.01;
       u.rate = 1;
       speechSynthesis.speak(u);
@@ -1368,6 +1368,16 @@ const TTSManager = (function() {
     if (el) { currentEl = el; el.classList.add('tts-speaking'); }
   }
 
+  function resetSpeechState(cancelActiveSpeech) {
+    if (cancelActiveSpeech && typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+    utteranceQueue = [];
+    isSpeakingFlag = false;
+    updateStopFloat(false);
+    clearHighlight();
+    onStartCb = null;
+    onEndCb = null;
+  }
+
   function speakNext() {
     if (utteranceQueue.length === 0) {
       isSpeakingFlag = false; updateStopFloat(false); clearHighlight();
@@ -1380,7 +1390,7 @@ const TTSManager = (function() {
     }
     const chunk = utteranceQueue.shift();
     const utter = new SpeechSynthesisUtterance(chunk);
-    utter.lang = 'en-US';
+    utter.lang = TTS_LANG;
     utter.voice = currentVoice;
     if (currentVoice && currentVoice.lang) utter.lang = currentVoice.lang;
     utter.rate = settings.rate;
@@ -1404,14 +1414,15 @@ const TTSManager = (function() {
     getSettings: function() { return settings; },
     setRate: function(rate) { settings.rate = Math.max(0.5, Math.min(2.0, rate)); saveSettings(); },
     setVoice: function(name) { settings.voiceName = name; currentVoice = null; saveSettings(); },
-    getAvailableVoices: function() { if (typeof speechSynthesis === 'undefined') return []; return speechSynthesis.getVoices().filter(v => v.lang.startsWith('en-')); },
+    getAvailableVoices: function() { if (typeof speechSynthesis === 'undefined') return []; return speechSynthesis.getVoices().filter(v => v.lang.startsWith(TTS_LANG)); },
     isSpeaking: function() { return isSpeakingFlag || (typeof speechSynthesis !== 'undefined' && speechSynthesis.speaking); },
 
     speak: function(text, opts) {
       opts = opts || {};
       const clean = (text || '').trim();
       if (!clean) return false;
-      this.stop();
+      const hasActiveSpeech = typeof speechSynthesis !== 'undefined' && (speechSynthesis.speaking || speechSynthesis.pending || isSpeakingFlag);
+      resetSpeechState(hasActiveSpeech);
       if (!currentVoice) currentVoice = findBestVoice();
       utteranceQueue = splitText(clean);
       onStartCb = opts.onStart || null;
@@ -1423,7 +1434,7 @@ const TTSManager = (function() {
       if (typeof speechSynthesis !== 'undefined') {
         if (speechSynthesis.paused) speechSynthesis.resume();
       }
-      setTimeout(speakNext, TTS_START_DELAY_MS);
+      speakNext();
       return true;
     },
 
@@ -1431,13 +1442,17 @@ const TTSManager = (function() {
       return this.speak(text, { rate: DEFAULT_RATE, el: el });
     },
 
+    handleSpeakWordClick: function(e, text, el) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+      }
+      return this.speakWord(text, el);
+    },
+
     stop: function() {
-      if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
-      utteranceQueue = [];
-      isSpeakingFlag = false;
-      updateStopFloat(false);
-      clearHighlight();
-      onEndCb = null;
+      resetSpeechState(true);
     },
 
     init: function() {
@@ -1460,7 +1475,9 @@ const TTSManager = (function() {
         }
       });
       if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined') {
-        const warmUp = function() {
+        const warmUp = function(e) {
+          const target = e && e.target;
+          if (target && target.closest && target.closest('.tts-btn')) return;
           warmUpSpeechSynthesis();
           document.removeEventListener('pointerdown', warmUp);
           document.removeEventListener('click', warmUp);
@@ -1771,7 +1788,7 @@ function renderQuestions(data) {
       html += `<div class="question-block">
         <div class="q-header">
           <span class="q-num">Q${q.num}</span>
-          <button class="tts-btn tts-btn-inline" style="margin-right:6px" onclick="event.stopPropagation();TTSManager.speakWord(this.closest('.question-block').querySelector('.q-text').textContent, this.closest('.question-block').querySelector('.q-text'))">🔊</button>
+          <button class="tts-btn tts-btn-inline" style="margin-right:6px" onclick="TTSManager.handleSpeakWordClick(event, this.closest('.question-block').querySelector('.q-text').textContent, this.closest('.question-block').querySelector('.q-text'))">🔊</button>
           <span>答案: <span class="answer-hidden" onclick="revealAnswer(this)">${q.answer}</span></span>
         </div>
         <div class="q-text">${escapeHtml(q.text)}</div>
@@ -1911,7 +1928,7 @@ function renderScenarioVocab(filter = '') {
           <!-- FRONT: English + Chinese + note -->
           <div class="vocab-item-front">
             <div style="display:flex;align-items:center;gap:4px;min-width:0;flex:1;">
-              <button class="tts-btn tts-btn-inline" data-word="${escapeAttr(w.en)}" style="margin-right:4px;flex-shrink:0;" onclick="event.stopPropagation();TTSManager.speakWord(this.dataset.word, this)">🔊</button>
+              <button class="tts-btn tts-btn-inline" data-word="${escapeAttr(w.en)}" style="margin-right:4px;flex-shrink:0;" onclick="TTSManager.handleSpeakWordClick(event, this.dataset.word, this)">🔊</button>
               <span class="en" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${learned ? '✅ ' : ''}${escapeHtml(w.en)}</span>
               <span class="pos-tag">${escapeHtml(pos)}</span>
             </div>
@@ -2103,7 +2120,7 @@ function showCard() {
     return;
   }
   const w = flashcardWords[flashcardIdx % flashcardWords.length];
-  document.getElementById('fcFront').innerHTML = `<button class="tts-btn tts-btn-card" data-word="${escapeAttr(w.en)}" onclick="event.stopPropagation();TTSManager.speakWord(this.dataset.word, this.closest('.flashcard-front'))">🔊</button><span>${escapeHtml(w.en)}</span><span class="pos-tag">${escapeHtml(w.pos)}</span><span class="flashcard-zh">${escapeHtml(w.zh)}</span>`;
+  document.getElementById('fcFront').innerHTML = `<button class="tts-btn tts-btn-card" data-word="${escapeAttr(w.en)}" onclick="TTSManager.handleSpeakWordClick(event, this.dataset.word, this.closest('.flashcard-front'))">🔊</button><span>${escapeHtml(w.en)}</span><span class="pos-tag">${escapeHtml(w.pos)}</span><span class="flashcard-zh">${escapeHtml(w.zh)}</span>`;
   document.getElementById('fcBack').innerHTML = `<div style="text-align:center;"><div>${escapeHtml(w.zh)}</div><span class="pos-tag">${escapeHtml(w.pos)}</span><div class="flashcard-answer">${escapeHtml(w.en)}</div><small style="font-weight:normal;">${escapeHtml(w.note)}</small></div>`;
   document.getElementById('cardIdx').textContent = (flashcardIdx % flashcardWords.length) + 1;
   document.getElementById('flashcard').classList.remove('flipped');
